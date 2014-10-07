@@ -1,0 +1,11 @@
+Package: euromomo
+Type: Package
+Title: EuroMoMo algorithm
+Version: 1.0
+Date: 2014-10-07
+Author: Mikko J Virtanen, ...
+Maintainer: Mikko J Virtanen <mikko.virtanen@thl.fi>
+Descriptions: something something
+License: GPL 2.0
+LazyData: yes
+Suggests:
