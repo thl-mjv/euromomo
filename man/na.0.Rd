@@ -7,6 +7,8 @@ na.0(a, b = 0)
 }
 \arguments{
 \item{a}{a parameter}
+
+\item{b}{anternative}
 }
 \value{
 another value
