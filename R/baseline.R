@@ -60,25 +60,51 @@ baseline <- function(data, seasonality =TRUE, ...){
   return(data)
 }
 
+#' Create condition variables and add them to the dataset
+#' @param data input data in EuroMOMO format
+#' @param spring: Week numbers for spring period
+#' @param autumn: Week numbers for autumn period
+#' @param duration: Duration of the baseline
+#' @param last: The last period that will be excluded
+#' @param delay: the number of delay week
+#' @value EuroMOMO data with extra variables with conditions used for modelling
+#' @export
 addconditions <- function(data, spring=15:26, autumn=36:45, duration=5*52, last=NULL, delay=0){
+
+  # Run addweeks function to create some week variables and trend
   data<-addweeks(data)
+
+  # Create Cond3: Period for spring and autumn
   data$Cond3 <- ifelse(with(data, WoDi %in% c(spring, autumn)), 1, 0)
+
+  # Create Cond4: Removing past few months
   if(is.null(last))
     data$Cond4 <- rep(1,nrow(data))
 
+  # Create Cond5: Long delays
   data$Cond5<-with(data,ifelse(wk<max(wk)-delay,1,0))
 
+  # Create Cond6: Length of the baseline (5 years)
   data$Cond6 <- with(data,ifelse(wk > max(wk)-duration - delay, 1, 0))
 
   return(data)
 
 }
 
+
+#' Create week variable and trend variable
+#' @param data input data in EuroMOMO format
+#' @value EuroMOMO data with extra variables with YearWeek and trend variable
+#' @export
 addweeks<-function(data){
+
+  # Create Year-Week of Death
   data$YWoDi<-with(data,sprintf("%04d-%02d",YoDi,WoDi))
+
   # Sort the data
   data <- data[order(data$YWoDi), ]
 
+  # Create trend variable
   data$wk <- c(1:nrow(data))
   return(data)
 }
