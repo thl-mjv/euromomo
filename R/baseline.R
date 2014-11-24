@@ -22,7 +22,7 @@
 #' Calculate baseline
 #' @param data input data in EuroMOMO format
 #' @param seasonality Should seasonality be included?
-#' @value EuroMOMO data with predicted values, prediction variances and overdispersion
+#' @return EuroMOMO data with predicted values, prediction variances and overdispersion
 #' @export
 baseline <- function(data, seasonality =TRUE, ...){
   # STEP 1: Calculate the trend (YWoDi as continuous)
@@ -67,7 +67,7 @@ baseline <- function(data, seasonality =TRUE, ...){
 #' @param duration: Duration of the baseline
 #' @param last: The last period that will be excluded
 #' @param delay: the number of delay week
-#' @value EuroMOMO data with extra variables with conditions used for modelling
+#' @return EuroMOMO data with extra variables with conditions used for modelling
 #' @export
 addconditions <- function(data, spring=15:26, autumn=36:45, duration=5*52, last=NULL, delay=0){
 
@@ -94,7 +94,7 @@ addconditions <- function(data, spring=15:26, autumn=36:45, duration=5*52, last=
 
 #' Create week variable and trend variable
 #' @param data input data in EuroMOMO format
-#' @value EuroMOMO data with extra variables with YearWeek and trend variable
+#' @return EuroMOMO data with extra variables with YearWeek and trend variable
 #' @export
 addweeks<-function(data){
 
