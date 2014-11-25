@@ -73,8 +73,8 @@ delay <- function(rTDF, holidays.filename) {
   # Predict expected number of reported deaths
   rTDF.pred <- subset(rTDF.long, subset = delay == as.character(euromomoCntrl$back))
   delay.pred<-predict(delay.model, newdata =rTDF.pred, type = "response",se=TRUE)
-  rTDF.pred$  cnb <- delay.pred$fit
-  rTDF.pred$v.cnb <- delay.pred$se.fit^2
+  rTDF.pred$  cnb <- with(delay.pred,fit)
+  rTDF.pred$v.cnb <- with(delay.pred,fit+se.fit^2)
   rTDF.pred<-within(rTDF.pred,{
     u.cnb<-cnb+2*sqrt(v.cnb)
     l.cnb<-cnb-2*sqrt(v.cnb)

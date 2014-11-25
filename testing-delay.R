@@ -12,7 +12,7 @@ with(subset(crTDF,as.character(ISOweek)>"2012-W40"),
                       type="l",lwd=c(3,1,1,1),lty=c(1,1,2,2),col=c(1,2,3,3)))
 
 
-
+with(crTDF,tail(sqrt(v.cnb)))
 
 with(subset(rTDF.long,as.character(ISOweek)>"2012-W40"),
      xyplot(open/maxopen~as.numeric(ISOweek)|delay,
