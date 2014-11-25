@@ -14,7 +14,9 @@ euromomoCntrl <- list(
   #Choose the number of weeks to remove for modeling delay (Parameter?)
   back = 6,
   #Day of aggregation (a thursday)
-  dAggregation = ISOweek::ISOweek2date("2014-W01-4")
+  dAggregation = ISOweek::ISOweek2date("2014-W01-4"),
+  #Standard number of working days in a week.
+  nWorkday=5
 )
 
 #' R function for reading in and performing the aggregation necessary
@@ -126,6 +128,15 @@ rT2DataFrame <- function(rT) {
   df <- cbind(ISOweek=rownames(df),df)
   rownames(df) <- seq_len(nrow(df))
   return(df)
+}
+
+#' Show the delay as a function of time
+plotDelay <- function(df) {
+  delayIdx <-  grep("^w[0-9]+$",colnames(df))
+  #maxDelay <- length(delayIdx) - 1  
+  backWeeks <- euromomoCntrl$back 
+  total <- df[,max(delayIdx)]
+  matplot(1:nrow(df), df[,delayIdx]/matrix(total,nrow=nrow(df),ncol=backWeeks+1,byrow=FALSE),type="l",lty=1,ylab="Proportion of total",xlab="Time",ylim=c(0,1))
 }
 
 doIt <- function() {
