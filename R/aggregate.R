@@ -10,7 +10,7 @@ euromomoCntrl <- list(
   fileName = "../data/DoD_DoR.txt",
   #Format for how Dates are specified
   #dateFormat <- "%d.%m.%Y"
-  dateFormat = "%d%b%Y", #
+  dateFormat = "%Y/%m/%d", #
   #Choose the number of weeks to remove for modeling delay (Parameter?)
   back = 6,
   #Day of aggregation (a thursday)
@@ -61,7 +61,7 @@ file2ReportingTriangle <- function(euromomoCntrl) {
     warning("No. of observations with a negative delay: ",sum(negativeDelay),". These observations are removed.\n")
     momo <- subset(momo, !negativeDelay)
   }
-  
+
   #Monday of last full week before dAggregation (equal to dAggregation if its a monday)
   weekday <- ISOweek::ISOweekday(euromomoCntrl$dAggregation)
   dLastFullWeek <- euromomoCntrl$dAggregation - ifelse(weekday == 6, 6-1, (weekday - 1) + 7)
@@ -71,7 +71,7 @@ file2ReportingTriangle <- function(euromomoCntrl) {
   #in the last full week before dAggregation
   cat("Removing ",sum(momo$DoRMon > dLastFullWeek)," observations reported after dAggregation=",as.character(euromomoCntrl$dAggregation),".\n")
   momo <- subset(momo, momo$DoRMon <= dLastFullWeek)
-  
+
   #This should be a parameter somewhere and needs to be synced with EuroMomo
   #parameter file. For now: Go back 5 years and then to closest monday more
   #than 5 years ago.
@@ -133,8 +133,8 @@ rT2DataFrame <- function(rT) {
 #' Show the delay as a function of time
 plotDelay <- function(df) {
   delayIdx <-  grep("^w[0-9]+$",colnames(df))
-  #maxDelay <- length(delayIdx) - 1  
-  backWeeks <- euromomoCntrl$back 
+  #maxDelay <- length(delayIdx) - 1
+  backWeeks <- euromomoCntrl$back
   total <- df[,max(delayIdx)]
   matplot(1:nrow(df), df[,delayIdx]/matrix(total,nrow=nrow(df),ncol=backWeeks+1,byrow=FALSE),type="l",lty=1,ylab="Proportion of total",xlab="Time",ylim=c(0,1))
 }
