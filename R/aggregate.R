@@ -7,7 +7,7 @@ library("ISOweek")
 euromomoCntrl <- list(
   #File with mortality data to read
   #fileName <- "../../../SampleData/CH_INPUT_19NOV14.CSV"
-  fileName = "../../../SampleData/DoD_DoR.txt",
+  fileName = "../data/DoD_DoR.txt",
   #Format for how Dates are specified
   #dateFormat <- "%d.%m.%Y"
   dateFormat = "%d%b%Y", #
@@ -59,22 +59,26 @@ file2ReportingTriangle <- function(euromomoCntrl) {
     warning("No. of observations with a negative delay: ",sum(negativeDelay),". These observations are removed.\n")
     momo <- subset(momo, !negativeDelay)
   }
-
-  #All observations arriving after dAggregation need to be removed
-  cat("Removing ",sum(momo$DoR > euromomoCntrl$dAggregation)," observations reported after dAggregation=",as.character(euromomoCntrl$dAggregation),".\n")
-  momo <- subset(momo, momo$DoR <= euromomoCntrl$dAggregation)
-
-  weekday <- ISOweek::ISOweekday(euromomoCntrl$dAggregation)
   
   #Monday of last full week before dAggregation (equal to dAggregation if its a monday)
-  dLastFullWeek <- dAggregation - ifelse(weekday == 6, 6-1, (weekday - 1) + 7)
+  weekday <- ISOweek::ISOweekday(euromomoCntrl$dAggregation)
+  dLastFullWeek <- euromomoCntrl$dAggregation - ifelse(weekday == 6, 6-1, (weekday - 1) + 7)
 
+  #All observations arriving after dAggregation need to be removed.
+  #Actually, its not dAggregation, but those with a DoR which is
+  #in the last full week before dAggregation
+  cat("Removing ",sum(momo$DoRMon > dLastFullWeek)," observations reported after dAggregation=",as.character(euromomoCntrl$dAggregation),".\n")
+  momo <- subset(momo, momo$DoRMon <= dLastFullWeek)
+  
   #This should be a parameter somewhere and needs to be synced with EuroMomo
   #parameter file. For now: Go back 5 years and then to closest monday more
   #than 5 years ago.
-  dStart <- seq(dLastFullWeek,length=2,by="-6 years")[-1]
+  #dStart <- seq(dLastFullWeek,length=2,by="-6 years")[-1]
+  firstWeekInData <- min(momo$DoDMon) - (ISOweek::ISOweekday(min(momo$DoDMon)) - 1)
+  dStart <- firstWeekInData
   dStart <- dStart - (ISOweek::ISOweekday(dStart) - 1)
-  if (min(momo$DoDMon) > dStart) {
+  #browser()
+  if (firstWeekInData > dStart) {
     stop("Data don't go back as far as requested.")
   }
   #Subset data to be only observations with DoD
@@ -91,7 +95,7 @@ file2ReportingTriangle <- function(euromomoCntrl) {
 
   #Put NA's at position of structural zeroes
   cellAvailable <- outer(dWeeks, 0:backWeeks, function(dWeek,Delay) {
-    dWeek + Delay*7 <= euromomoCntrl$dAggregation
+    dWeek + Delay*7 <= dLastFullWeek #euromomoCntrl$dAggregation
   })
 
   #Sanity checks
@@ -111,12 +115,25 @@ file2ReportingTriangle <- function(euromomoCntrl) {
 }
 
 #' Deprecated function to read IRISH data
-aggregateIE <- function() {
-  momo <- foreign::read.dta(file="../../SampleData/delay-Total-Ireland-2014-47.dta")
-  head(momo,n=1)
+#aggregateIE <- function() {
+#  momo <- foreign::read.dta(file="../../SampleData/delay-Total-Ireland-2014-47.dta")
+#  head(momo,n=1)
+#}
+
+rT2DataFrame <- function(rT) {
+  colnames(rT) = paste("w",sprintf("%02d",as.numeric(colnames(rT))),sep="")
+  df <- as.data.frame(rT)
+  df <- cbind(ISOweek=rownames(df),df)
+  rownames(df) <- seq_len(nrow(df))
+  return(df)
 }
 
 doIt <- function() {
   source("aggregate.R")
   rTList <- file2ReportingTriangle(euromomoCntrl)
+  rTList$rT
+  rTList$cumRT
+  rTDF <- rT2DataFrame(rTList$cumRT)
+  colnames(rTDF)
+  rownames(rTDF)
 }
