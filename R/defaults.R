@@ -23,7 +23,9 @@ loadDefaults<-function(debug=FALSE) {
   dats<-dats[!grepl("^#",dats)] # remove comments
   dats<-dats[nchar(dats)>0]
   if(debug) print(head(dats))
-  splits<-strsplit(dats,"=")
+  #splits<-strsplit(dats,"=")
+  splits <- regmatches(dats, regexpr("=",dats), invert=TRUE)
+
   labels<-sapply(splits,function(a) strsplit(a[1],"[.]")[[1]])
   values<-sapply(splits,function(a) a[2])
   optmat<-t(rbind(labels,values))
