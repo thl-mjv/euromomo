@@ -1,34 +1,21 @@
 # Load packages
-library(ISOweek)
-library(reshape2)
-library(foreign)
 
 #' R function for delay corretion based on negative binomial distribution
-#' Input: dataframe with aggregated number of reported deaths
-#'        string containing the filename of the holiday data
-#' Output: dataframe with delay expected number of deaths and its variance
+#' @param rTDF dataframe with aggregated number of reported deaths
+#' @param holiday file with holiday definitions
+#' @value a data frame with added column for delay corrected number of deaths and it's estimated variance
+#' @export
 
-delay.nb <- function(rTDF.cum, holidays.filename) {
+
+delay.nb <- function(rTDF, holiday) {
   # temporal assingment of objects
   rTDF.cum <- rTDF
-  holidays.filename <- "data/IEH3.dta"
-
-  # Read holiday data (assuming it is a stata file, to be changed in the future)
-  holiday.data <- read.dta(file = holidays.filename)
-
-  # Add ISOweek tot holiday.data
-  holiday.data <- within(holiday.data, {
-    ISOweek <- ISOweek(date = date)
-  })
-
-  # Aggregate holiday data by ISOweek
-  holiday.data.agg <- aggregate(closed ~ ISOweek, data = holiday.data, FUN = sum)
 
   # Make the holiday triangle
   # First get the isoweeks form rTDF.cum
   hTDF <- data.frame(ISOweek = rTDF.cum$ISOweek)
   # Merge this with the aggregated holidays
-  hTDF <- merge(hTDF, holiday.data.agg, all.x = TRUE)
+  hTDF <- merge(hTDF, holiday, all.x = TRUE)
   # Replace NA by 0
   hTDF <- within(hTDF, closed <- ifelse(is.na(closed), 0, closed))
 
@@ -62,11 +49,14 @@ delay.nb <- function(rTDF.cum, holidays.filename) {
   # Get the last known number of deaths
   nD <- diag(as.matrix(rTDF.cum[rows, cols]))
 
+  rTDF.last<-apply(as.matrix(rTDF.cum[,-1]),1,max,na.rm=TRUE) # latest observed
   # Make new dataframe for export
   rTDF.pred <- data.frame(
-    ISOweek = rTDF.cum$ISOweek,
-    cnb = rTDF.cum[, ncol(rTDF.cum)],
-    v.cnb = 0)
+    ISOweek = rTDF.cum$ISOweek,       # Week
+    nb = rTDF.cum[, ncol(rTDF.cum)],  # observed full
+    onb = rTDF.last,                  # latest registered
+    cnb = rTDF.cum[, ncol(rTDF.cum)], # to be filled with expected
+    v.cnb = 0) # to be filled with variance
 
   # Calculate the expected number of deaths and the variance
   # and plug them into rTDF.pred

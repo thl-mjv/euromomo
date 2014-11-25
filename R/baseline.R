@@ -29,7 +29,7 @@
 #' @export
 baseline <- function(data, seasonality =NULL, spline=c("none","cubic","linear"),
                      splinedf=5,group=NULL,...){
-  # STEP 1: Calculate the trend (YWoDi as continuous)
+  # STEP 1: Calculate the trend (ISOweek) as continuous)
   data<-addweeks(data,group=group)
   # possible spline basis generation goes here
   spline<-match.arg(spline)
@@ -128,7 +128,11 @@ addconditions <- function(data, spring=15:26, autumn=36:45, duration=5*52, last=
 #' @export
 addweeks<-function(data,group=NULL){
   # Checks
-  if(!all(c("YoDi","WoDi")%in%names(data))) stop("Source data invalid")
+  if(!"ISOweek"%in%names(data)) stop("Invalid data")
+  if(!all(c("YoDi","WoDi")%in%names(data))) {
+    data$YoDi<-as.numeric(substring(as.character(data$ISOweek),1,4))
+    data$WoDi<-as.numeric(substring(as.character(data$ISOweek),7))
+  }
 
   # Subset to right group
   # fails if called as addweeks(data,groups=c("something","somethingelse"))
@@ -138,13 +142,13 @@ addweeks<-function(data,group=NULL){
     else data<-subset(data,get(group)==1)
   }
 
-  # Create Year-Week of Death
-  if(!"YWoDi"%in%names(data))
-    data$YWoDi<-with(data,sprintf("%04d-%02d",YoDi,WoDi))
+  # Create Year-Week of Death - NO LONGER NEEDE
+  #if(!"YWoDi"%in%names(data))
+  #  data$YWoDi<-with(data,sprintf("%04d-%02d",YoDi,WoDi))
 
   # Sort the data
   if(!"wk"%in%names(data)) {
-    data <- data[order(data$YWoDi), ]
+    data <- data[order(data$ISOweek), ]
     # Create trend variable
     data$wk <- c(1:nrow(data))
   }
@@ -156,9 +160,25 @@ addweeks<-function(data,group=NULL){
 #' @param data a data frame in EuroMoMo format
 #' @value a data frame in EuroMoMo format
 #' @export
-zscore <- function(data) {
-  ## FIXME: move the calculation so that you can plug the variance from the delay directly into account
-  data$Zscore <-  with(data,(cnb^(2/3) - pnb^(2/3)) / ((4/9)*(pnb^(1/3))*(overdispersion+pnb*(v.pnb)))^(1/2))
+zscore <- function(data,type=c("baseline","both")) {
+  type<-match.arg(type)
+  blvars<-c("pnb","overdispersion","v.pnb")
+  # if we requested something needing baseline and it is not available, issue warnings and go away
+  if(!all(blvars%in%names(data))&type%in%c("baseline","both")) {
+    warning("No baseline found")
+    return(data)
+  }
+  dlvars<-c("cnb","v.cnb")
+  # if we requested something needing baseline and it is not available, issue warnings and go away
+  if(!all(dlvars%in%names(data))&type%in%c("both")) {
+    warning("No baseline found")
+    return(data)
+  }
+
+  if(type=="baseline")
+    data$Zscore <-  with(data,(cnb^(2/3) - pnb^(2/3)) / ((4/9)*(pnb^(1/3))*(overdispersion+pnb*(v.pnb)))^(1/2))
+  if(type=="both")
+    data$Zscore <- with(data,(cnb^(2/3) - pnb^(2/3)) / ((4/9)*(pnb^(1/3))*(overdispersion+v.cnb/pnb+pnb*(v.pnb)))^(1/2))
 
   return(data)
 }
@@ -171,12 +191,38 @@ zscore <- function(data) {
 #' @param multiplier how many approximate standard deviations to use?
 #' @value a data frame in EuroMoMo format
 #' @export
-excess<-function(data,multiplier=2){
-  data$u.pnb<-with(data,(pnb^(2/3)+ multiplier*((4/9)*(pnb^(1/3))*(overdispersion+(v.pnb)*(pnb)))^(1/2))^(3/2) )
-  data$l.pnb<-with(data,pmax(0,pnb^(2/3)- multiplier*((4/9)*(pnb^(1/3))*(overdispersion+(v.pnb)*(pnb)))^(1/2))^(3/2) )
-  data$excess<-with(data,cnb-pnb)
-  data$u.excess<-with(data,cnb-u.pnb)
-  data$l.excess<-with(data,cnb-l.pnb)
+excess<-function(data,multiplier=2,type=c("baseline","basedelay","delay","both")){
+  type<-match.arg(type)
+  blvars<-c("pnb","overdispersion","v.pnb")
+  # if we requested something needing baseline and it is not available, issue warnings and go away
+  if(!all(blvars%in%names(data))&type%in%c("baseline","both","basedelay")) {
+    warning("No baseline found")
+    return(data)
+  }
+  dlvars<-c("cnb","v.cnb")
+  # if we requested something needing baseline and it is not available, issue warnings and go away
+  if(!all(dlvars%in%names(data))&type%in%c("delay","both","basedelay")) {
+    warning("No baseline found")
+    return(data)
+  }
+  if(type%in%c("baseline","both","basedelay")) {
+    if(type=="baseline")
+      data$pv.pnb<-with(data,((4/9)*(pnb^(1/3))*(overdispersion+(v.pnb)*(pnb)))^(1/2))
+    else
+      data$pv.pnb<-with(data,((4/9)*(pnb^(1/3))*(overdispersion+(v.cnb)/pnb+(v.pnb)*(pnb)))^(1/2))
+    data$u.pnb<-with(data,(pnb^(2/3)+ multiplier*pv.pnb)^(3/2))
+    data$l.pnb<-with(data,pmax(0,pnb^(2/3)- multiplier*pv.pnb)^(3/2))
+    data$excess<-with(data,cnb-pnb)
+    data$u.excess<-with(data,cnb-u.pnb)
+    data$l.excess<-with(data,cnb-l.pnb)
+  }
+  if(type%in%c("delay","both")) {
+    # TODO: figure out the 2/3 -power transformation
+    data$pv.cnb<-with(data,ifelse(v.cnb==0,0,(v.cnb)^(1/2)))
+    data$u.cnb<-with(data,(cnb+multiplier*pv.cnb))
+    data$l.cnb<-with(data,(cnb-multiplier*pv.cnb))
+
+  }
   return(data)
 }
 

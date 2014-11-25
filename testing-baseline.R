@@ -4,8 +4,9 @@ options()$euromomo
 
 data <- read.csv2("delay.txt")
 
-data2<-addconditions(data,spring="warm and pretty",autumn=30:48,delay=1:2)
 
+data2<-addconditions(crTDF4,spring=15:26,autumn=30:48,delay=1:2)
+summary(data2)
 
 data3 <- baseline(data2,spline="n",splinedf=2)
 
@@ -16,13 +17,15 @@ with(data3,matplot(cbind(sin1,sin2),type="l"))
 
 data4 <- zscore(data3)
 
-data5 <- excess(data4)
+data5 <- excess(data4,type="bo")
 
-head(data5)
+tail(data5)
 
 library("lattice")
 
-xyplot(nb+cnb+pnb+u.pnb+l.pnb~wk,data=data5,type="l")
+xyplot(nb+cnb+pnb+u.pnb+l.pnb+u.cnb+l.cnb~wk,data=data5,subset=wk>300,
+       type="l",ylim=c(0,2000),lty=c(1,1,1,2,2,2,2),lwd=c(2,2,1,1,1,1,1),
+       col=c(1,2,3,3,3,2,2))
 xyplot(Zscore~wk,data=data5,type="l")
 xyplot(excess+u.excess+l.excess~wk,data=data5,type="l")
 
