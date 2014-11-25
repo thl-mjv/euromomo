@@ -21,24 +21,35 @@
 
 #' Calculate baseline
 #' @param data input data in EuroMOMO format
-#' @param seasonality Should seasonality be included?
+#' @param seasonality number of seasonality components
+#' @param spline type of spline
 #' @return EuroMOMO data with predicted values, prediction variances and overdispersion
 #' @export
-baseline <- function(data, seasonality =TRUE, ...){
+baseline <- function(data, seasonality =TRUE, spline=c("none","cubic","linear"),splinedf=5,...){
   # STEP 1: Calculate the trend (YWoDi as continuous)
   data<-addweeks(data)
+  # possible spline basis generation goes here
+  spline<-match.arg(spline)
+  if(spline=="cubic") data$basis<-bs(data$wk,df=splinedf)
+  if(spline=="linear") data$basis<-bs(data$wk,df=splinedf,degree=1)
+
 
   # STEP 2: Calculate the sin-cos trends
-  data$sin1 <- sin(2*pi * data$wk/52.18)
-  data$cos1 <- cos(2*pi * data$wk/52.18)
-
+  if(seasonality>0) {
+    for(i in 1:seasonality) {
+      data[[paste("sin",i,sep="")]] <- sin(i*2 * pi * data$wk/(52.18))
+      data[[paste("cos",i,sep="")]] <- cos(i*2 * pi * data$wk/(52.18))
+    }
+  }
   # STEP 3: Fit the Poisson model (linear trend) only when the conditions apply
   # Create dummy variable combining all conditions
   data$cond <- with(data,ifelse(Cond3==1 & Cond4==1 & Cond5==1 & Cond6==1, 1, 0))
   ### See the number of deaths on the period of interest. If too few or none, fitting is not possible
 
   glm_form <- "cnb ~wk"
-  if(seasonality==TRUE) glm_form<-paste(glm_form,"+ sin1 + cos1")
+  if(seasonality>0)
+    glm_form<-paste(glm_form,"+",paste(as.vector(outer(c("sin","cos"),1:seasonality,paste,sep="")),collapse="+"))
+  if(spline%in%c("linear","cubic")) glm_form<-paste(glm_form,"+basis")
 
   fit <- try(glm(formula(glm_form), data = data[data$cond==1, ], family = quasipoisson()))
 
