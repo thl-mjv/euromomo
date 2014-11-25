@@ -64,16 +64,15 @@ file2ReportingTriangle <- function(euromomoCntrl) {
   cat("Removing ",sum(momo$DoR > euromomoCntrl$dAggregation)," observations reported after dAggregation=",as.character(euromomoCntrl$dAggregation),".\n")
   momo <- subset(momo, momo$DoR <= euromomoCntrl$dAggregation)
 
+  weekday <- ISOweek::ISOweekday(euromomoCntrl$dAggregation)
+  
   #Monday of last full week before dAggregation (equal to dAggregation if its a monday)
-  dLastFullWeek <- with(euromomoCntrl, {
-    weekday <- ISOweek::ISOweekday(dAggregation)
-    dAggregation - ifelse(weekday == 1, 0, (weekday - 1) + 7)
-  })
+  dLastFullWeek <- dAggregation - ifelse(weekday == 6, 6-1, (weekday - 1) + 7)
 
   #This should be a parameter somewhere and needs to be synced with EuroMomo
   #parameter file. For now: Go back 5 years and then to closest monday more
   #than 5 years ago.
-  dStart <- seq(dLastFullWeek,length=2,by="-5 years")[-1]
+  dStart <- seq(dLastFullWeek,length=2,by="-6 years")[-1]
   dStart <- dStart - (ISOweek::ISOweekday(dStart) - 1)
   if (min(momo$DoDMon) > dStart) {
     stop("Data don't go back as far as requested.")
@@ -108,7 +107,7 @@ file2ReportingTriangle <- function(euromomoCntrl) {
 
   cat("Tabulated a total of ",sum(rT,na.rm=TRUE),"observations in the reporting triangle.\n")
   #Done
-  return(list(cumRT=cumRT, dWeeks=dWeeks, delays=0:backWeeks))
+  return(list(cumRT=cumRT, rT=rT,dWeeks=dWeeks, delays=0:backWeeks))
 }
 
 #' Deprecated function to read IRISH data
