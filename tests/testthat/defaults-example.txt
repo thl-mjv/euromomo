@@ -24,7 +24,7 @@ group.6.label=A very special group
 
 ### Baseline dependent on group ###
 group.1.seasonality=FALSE
-group.1.trend=TRUE
+group.1.trend=1
 group.2.seasonality=FALSE
 group.2.trend=TRUE
 group.3.seasonality=TRUE
