@@ -16,7 +16,7 @@ euromomoCntrl <- list(
   #Day of aggregation (a thursday)
   dAggregation = ISOweek::ISOweek2date("2014-W01-4"),
   #Standard number of working days in a week.
-  nWorkday=5
+  nWorkdays=5
 )
 
 #' R function for reading in and performing the aggregation necessary
