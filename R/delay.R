@@ -1,32 +1,45 @@
-# Load packages
-library(ISOweek)
-#library(reshape2)
-library(foreign)
-#install.packages("reshape2")
-
-delay <- function(rTDF, method=c("poisson","negbin"),
-                  opentype=c("offset","effect","none"),
-                  openvar=c("open","propopen"),
-                  delaytype=c("factor","numeric","none"),holidays.filename) {
-  # temporal assingment of objects
-  holidays.filename <- "data/IEH3.dta"
-
+#' Manage the holiday files
+#'
+#' @param holiday.filename name of the file
+#' @value a data.frame with columns ISOweek and something
+#' @export
+holiday<-function(holiday.filename="data/IEH3.dta") {
   # Read holiday data
-  holiday.data <- read.dta(file = holidays.filename)
-
+  if(grepl("[.]dta$",holiday.filename)) {
+    cat("Assuming the file is in Stata format")
+    require("foreign")
+    holiday.data <- read.dta(file = holidays.filename)
+  }
   # Add ISOweek tot holiday.data
   holiday.data <- within(holiday.data, {
     ISOweek <- ISOweek(date = date)
   })
 
   # Aggregate holiday data by ISOweek
-  holiday.data.agg <- aggregate(closed ~ ISOweek, data = holiday.data, FUN = sum)
+  aggregate(closed ~ ISOweek, data = holiday.data, FUN = sum)
 
+}
+#' Delay correction
+#'
+#' @param rTDF source data from aggregation
+#' @param method either "poisson" or "negbin"
+#' @param opentype which type of effect for the "open"?
+#' @param openvar which version of the variable "open" to user=
+#' @param delaytype which kind of effect for the delay variable?
+#' @param holiday file with holiday definitions
+#' @value a data frame with added column for delay corrected number of deaths and it's estimated variance
+#' @export
+delay <- function(rTDF,
+                  method=c("poisson","negbin"),
+                  opentype=c("offset","effect","none"),
+                  openvar=c("open","propopen"),
+                  delaytype=c("factor","numeric","none"),holiday) {
+  # temporal assingment of objects
   # Make the holiday triangle
   # First get the isoweeks form rTDF
   hTDF <- data.frame(ISOweek = rTDF$ISOweek)
   # Merge this with the aggregated holidays
-  hTDF <- merge(hTDF, holiday.data.agg, all.x = TRUE)
+  hTDF <- merge(hTDF, holiday, all.x = TRUE)
    # Replace NA by 0
   hTDF <- within(hTDF, closed <- ifelse(is.na(closed), 0, closed))
   # Convert closed days to open days and add standard working days
@@ -64,6 +77,7 @@ delay <- function(rTDF, method=c("poisson","negbin"),
 
   # Merge rTDF.long with cumHT.long
   rTDF.long <- merge(rTDF.long, cumHT.long)
+  rTDF.long$onb<-with(rTDF.long,ave(na.0(wr),ISOweek,FUN=max))
   rTDF.long$numdelay<-as.numeric(rTDF.long$delay)
 
   rTDF.long$maxopen<-with(rTDF.long,ave(open,ISOweek,FUN=max))
@@ -83,17 +97,17 @@ delay <- function(rTDF, method=c("poisson","negbin"),
 
   print(delay.formula)
   delay.model <- glm(formula(delay.formula),
-                     data = rTDF.long, family = poisson, na.action = na.exclude)
+                     data = rTDF.long, family = quasipoisson(), na.action = na.exclude)
 
   # Predict expected number of reported deaths
   rTDF.pred <- subset(rTDF.long, subset = delay == as.character(euromomoCntrl$back))
   delay.pred<-predict(delay.model, newdata =rTDF.pred, type = "response",se=TRUE)
-  rTDF.pred$  cnb <- with(delay.pred,fit)
-  rTDF.pred$v.cnb <- with(delay.pred,fit+se.fit^2)
-  rTDF.pred<-within(rTDF.pred,{
-    u.cnb<-cnb+2*sqrt(v.cnb)
-    l.cnb<-cnb-2*sqrt(v.cnb)
-  })
+  rTDF.pred$ p.cnb <- with(delay.pred,fit)
+  rTDF.pred$vp.cnb <- with(delay.pred,se.fit^2)
+  rTDF.pred$vv.cnb <- with(delay.pred,fit+se.fit^2)
+  rTDF.pred$   cnb <- with(rTDF.pred,ifelse(is.na(wr),p.cnb,wr))
+  rTDF.pred$ v.cnb <- with(rTDF.pred,ifelse(is.na(wr),vp.cnb,0))
+
   return(rTDF.pred)
 }
 
