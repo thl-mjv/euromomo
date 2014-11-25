@@ -1,3 +1,6 @@
+loadDefaults(TRUE)
+
+options()$euromomo
 
 data <- read.csv2("delay.txt")
 

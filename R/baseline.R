@@ -27,7 +27,7 @@
 #' @param group which group to use. Groups are defined using variables so this must be a name of an actual variable in the data
 #' @return EuroMOMO data with predicted values, prediction variances and overdispersion
 #' @export
-baseline <- function(data, seasonality =1, spline=c("none","cubic","linear"),
+baseline <- function(data, seasonality =NULL, spline=c("none","cubic","linear"),
                      splinedf=5,group=NULL,...){
   # STEP 1: Calculate the trend (YWoDi as continuous)
   data<-addweeks(data,group=group)
@@ -39,6 +39,8 @@ baseline <- function(data, seasonality =1, spline=c("none","cubic","linear"),
 
 
   # STEP 2: Calculate the sin-cos trends
+  if(is.null(seasonality))
+    seasonality<-as.numeric(getOption("euromomo")$all$baseline$seasonality)
   if(seasonality>0) {
     seasonality<-pmax(1,seasonality)[1]
     for(i in 1:seasonality) {
