@@ -4,6 +4,14 @@ context("Parsing the Defaults file.")
 
 #Read the default bogus defaults-example file
 parseDefaultsFile("defaults-example.txt")
+opts <- getOption("euromomo")
+
+test_that("Missing Important Variables",
+          expect_error(checkOptions(),
+                       "The following variable names are missing: WorkDirectory"))
+
+opts[["WorkDirectory"]] <- "C:/foobar/foobarbar"
+options(euromomo=opts)
 
 test_that("dStart > dEnd",
           expect_error(checkOptions(),
@@ -26,5 +34,5 @@ checkOptions()
 
 #Should not make errors.
 test_that("trend is logical after fixing problem",
-          expect_equal(checkOptions(), NULL))
+          expect_equal(checkOptions(), TRUE))
           

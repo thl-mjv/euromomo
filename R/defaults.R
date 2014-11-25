@@ -1,18 +1,14 @@
-#' Load defaults for parameters
-#'
-#' Loads various defaults files and stores them globally.
-#' Simplifies the code as all country specific issues can be resolved in these files.
-#' All files with pattern defaults-*.dat will be used in alphapetical order.
-#' Thus the latter files override the former. So, using defaults-global.dat and
-#' defaults-local.dat the latter will override the former.
-#' Also, you can use either .dat or .txt so that .txt overrides .dat
-#'
-#' There is also a default directory in the package. It just states that the source files should
-#' be downloaded to a subdirectory "download" in the current directory
+#' Function to parse a specification file for setting the 
+#' R-EuroMOMO algorithm parameters. The parser is handwritten based
+#' on regular expressions. This is error prone. Future versions could
+#' be, e.g., XML based, but this works for now. Based on the philosophy
+#' of a SINGLE parameter file, we removed any previous default configurations,
+#' but this would be easy to add again (e.g. one defining the 4 STANDARD age groups.)
 #'
 #'@param fileName of the parameter configuration file
 #'@param debug if true print extensive information
 #'@export
+
 parseDefaultsFile <- function(fileName, debug=FALSE) {
   #Here there would be the possibility to add extra files
   #containing, e.g. default parameter configrations
@@ -59,9 +55,33 @@ parseDefaultsFile <- function(fileName, debug=FALSE) {
   invisible(out)
 }
 
+#' Function to check, if the currently list stored in options("euromomo") 
+#' is semantically valid. At the moment, this check consists of:
+#' 1. Check for all entries in 'exception' that dStart <= dEnd
+#' 2. Each group has a 'definition' and a 'label' attribute. 
+#' 3. That all Boolean Attributes (e.g. 'trend' and 'seasonality') are really Booleans.
+#' At the first error the function stops.
+#' 
+#' @return TRUE, if functions passes finds no errors.
 checkOptions <- function() {
   #Extract from global options
   opts <- getOption("euromomo")
+  
+  #Check that all important variables are there
+  importantVarNames <- c("Country",
+                         "Counties",
+                         "Institution",
+                         "WorkDirectory",
+                         "InputFile",
+                         "HolidayFile",
+                         "BaselineSeasons",
+                         "StartDelayEst")
+  
+  idxMissing <- which(!(importantVarNames %in% names(opts)))
+  if (length(idxMissing)>0) {
+    stop("The following variable names are missing: ",importantVarNames[idxMissing],"\n.")
+  }
+  
   
   #Check that ISO weeks of exception are valid.
   dStart <- ISOweek::ISOweek2date(paste(opts$exception[,1],"-1",sep=""))
@@ -90,10 +110,15 @@ checkOptions <- function() {
       }
     }
   }
-  invisible()
+  #If we get here there were no errors.
+  invisible(TRUE)
 }
 
 doIt <- function() {
+  source("defaults.R")
   parseDefaultsFile("../defaults-example.txt")
   checkOptions()
+  #Extract stored list
+  opts <- getOption("euromomo")
+  opts
 }
