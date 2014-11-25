@@ -1,12 +1,12 @@
 # Load packages
 library(ISOweek)
-library(reshape2)
+#library(reshape2)
 library(foreign)
+#install.packages("reshape2")
 
-
-delay <- function((rTDF, holidays.filename) {
+delay <- function(rTDF, holidays.filename) {
   # temporal assingment of objects
-  holidays.filename <- "../data/IEH3.dta"
+  holidays.filename <- "data/IEH3.dta"
 
   # Read holiday data
   holiday.data <- read.dta(file = holidays.filename)
@@ -61,12 +61,25 @@ delay <- function((rTDF, holidays.filename) {
 
   # Merge rTDF.long with cumHT.long
   rTDF.long <- merge(rTDF.long, cumHT.long)
+  rTDF.long$numdelay<-as.numeric(rTDF.long$delay)
 
+  rTDF.long$maxopen<-with(rTDF.long,ave(open,ISOweek,FUN=max))
   # Poisson model for expected reported deaths
-  delay.model <- glm(wr ~ ISOweek + delay + offset(log(open)), data = rTDF.long, family = poisson, na.action = na.exclude)
+  ## offset: none, open, open/maxopen, ...
+  ## delay: factor/numeric/...
+  delay.model <- glm(wr ~ ISOweek + (delay) + offset(log(open)),#+log(maxopen),
+                     data = rTDF.long, family = poisson, na.action = na.exclude)
 
   # Predict expected number of reported deaths
-  rTDF.pred <- subset(rTDF.long, subset = delay == "6")
-  rTDF.pred$pred <- predict(delay.model, newdata =rTDF.pred, type = "response")
+  rTDF.pred <- subset(rTDF.long, subset = delay == as.character(euromomoCntrl$back))
+  delay.pred<-predict(delay.model, newdata =rTDF.pred, type = "response",se=TRUE)
+  rTDF.pred$  cnb <- delay.pred$fit
+  rTDF.pred$v.cnb <- delay.pred$se.fit^2
+  rTDF.pred<-within(rTDF.pred,{
+    u.cnb<-cnb+2*sqrt(v.cnb)
+    l.cnb<-cnb-2*sqrt(v.cnb)
+  })
+  return(rTDF.pred)
+}
 
 
