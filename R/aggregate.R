@@ -120,9 +120,16 @@ file2ReportingTriangle <- function(euromomoCntrl) {
 #  head(momo,n=1)
 #}
 
+rT2DataFrame <- function(rT) {
+  colnames(rT) = paste("w",sprintf("%02d",as.numeric(colnames(rT))),sep="")
+  return(as.data.frame(rT))
+}
+
 doIt <- function() {
   source("aggregate.R")
   rTList <- file2ReportingTriangle(euromomoCntrl)
   rTList$rT
   rTList$cumRT
+  rTDF = rT2DataFrame(rTList$cumRT)
+  colnames(rTDF)
 }
