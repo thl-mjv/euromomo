@@ -122,7 +122,10 @@ file2ReportingTriangle <- function(euromomoCntrl) {
 
 rT2DataFrame <- function(rT) {
   colnames(rT) = paste("w",sprintf("%02d",as.numeric(colnames(rT))),sep="")
-  return(as.data.frame(rT))
+  df <- as.data.frame(rT)
+  df <- cbind(ISOweek=rownames(df),df)
+  rownames(df) <- seq_len(nrow(df))
+  return(df)
 }
 
 doIt <- function() {
@@ -130,6 +133,7 @@ doIt <- function() {
   rTList <- file2ReportingTriangle(euromomoCntrl)
   rTList$rT
   rTList$cumRT
-  rTDF = rT2DataFrame(rTList$cumRT)
+  rTDF <- rT2DataFrame(rTList$cumRT)
   colnames(rTDF)
+  rownames(rTDF)
 }
