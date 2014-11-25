@@ -9,31 +9,38 @@ BaselineSeasons=5
 StartDelayEst=2008-01-01
 
 ### GROUPS ###
-group1=(age<5)
-group2=((5<=age)&(age<15)
-group3=((15<=age)&(age<65)
-group4=(65<=age)
-group5=(0<=age)
-group6=(20<=age)&(age<45)&(sex='M')
+group.1.defintion=(age<5)
+group.1.label=0-4
+group.2=((5<=age)&(age<15)
+group.1.label=5-14
+group.3=((15<=age)&(age<65)
+group.1.label=15-64
+group.4=(65<=age)
+group.1.label=65+
+group.5=(0<=age)
+group.1.label=Total
+group.6=(20<=age)&(age<45)&(sex='M')
+group.1.label=A very special group
 
 ### Baseline dependent on group ###
-group1.seasonality=0
-group1.trend=0
-group2.seasonality=0
-group2.trend=1
-group3.seasonality=1
-group3.trend=1
-group4.seasonality=1
-group4.trend=1
-group5.seasonality=1
-group5.trend=1
-group6.seasonality=1
-group6.trend=1
+group.1.seasonality=0
+group.1.trend=0
+group.2.seasonality=0
+group.2.trend=1
+group.3.seasonality=1
+group.3.trend=1
+group.4.seasonality=1
+group.4.trend=1
+group.5.seasonality=1
+group.5.trend=1
+group.6.seasonality=1
+group.6.trend=1
 
-### Exception periods ###
+### ISO weels of general exception periods ###
 spring=15:25
 autumn=33:46
 
-Except1=2007-02-01:2007-03-02
-Except2=2007-05-01:2007-06-01
+#Specific weeks to be included due, e.g, outbreaks, heat spells
+except=2007-W01:2007-W02
+except=2007-W23:2007-W03
 
