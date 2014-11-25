@@ -4,7 +4,10 @@ library(ISOweek)
 library(foreign)
 #install.packages("reshape2")
 
-delay <- function(rTDF, holidays.filename) {
+delay <- function(rTDF, method=c("poisson","negbin"),
+                  opentype=c("offset","effect","none"),
+                  openvar=c("open","propopen"),
+                  delaytype=c("factor","numeric","none"),holidays.filename) {
   # temporal assingment of objects
   holidays.filename <- "data/IEH3.dta"
 
@@ -64,10 +67,22 @@ delay <- function(rTDF, holidays.filename) {
   rTDF.long$numdelay<-as.numeric(rTDF.long$delay)
 
   rTDF.long$maxopen<-with(rTDF.long,ave(open,ISOweek,FUN=max))
+  rTDF.long$propopen<-with(rTDF.long,open/maxopen)
   # Poisson model for expected reported deaths
   ## offset: none, open, open/maxopen, ...
   ## delay: factor/numeric/...
-  delay.model <- glm(wr ~ ISOweek + (delay) + offset(log(open)),#+log(maxopen),
+  delay.formula<-"wr ~ ISOweek"
+  delaytype<-match.arg(delaytype)
+  if(delaytype=="factor") delay.formula<-paste(delay.formula,"+delay")
+  if(delaytype=="numeric") delay.formula<-paste(delay.formula,"+numdelay")
+
+  opentype<-match.arg(opentype)
+  openvar<-match.arg(openvar)
+  if(opentype=="offset") delay.formula<-paste(delay.formula,"+offset(log(",openvar,"))",sep="")
+  if(opentype=="effect") delay.formula<-paste(delay.formula,"+log(",openvar,")",sep="")
+
+  print(delay.formula)
+  delay.model <- glm(formula(delay.formula),
                      data = rTDF.long, family = poisson, na.action = na.exclude)
 
   # Predict expected number of reported deaths
