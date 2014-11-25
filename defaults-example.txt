@@ -1,0 +1,39 @@
+### PARAMETERS ####
+Country=Denmark
+Counties=Seeland,Jylland
+Institution=ISS
+Workdirectory=c:/.....
+InputFile=DoD_DoR.txt
+HolidayFile=Work.txt
+BaselineSeasons=5
+StartDelayEst=2008-01-01
+
+### GROUPS ###
+group1=(age<5)
+group2=((5<=age)&(age<15)
+group3=((15<=age)&(age<65)
+group4=(65<=age)
+group5=(0<=age)
+group6=(20<=age)&(age<45)&(sex='M')
+
+### Baseline dependent on group ###
+group1.seasonality=0
+group1.trend=0
+group2.seasonality=0
+group2.trend=1
+group3.seasonality=1
+group3.trend=1
+group4.seasonality=1
+group4.trend=1
+group5.seasonality=1
+group5.trend=1
+group6.seasonality=1
+group6.trend=1
+
+### Exception periods ###
+spring=15:25
+autumn=33:46
+
+Except1=2007-02-01:2007-03-02
+Except2=2007-05-01:2007-06-01
+
