@@ -1,5 +1,5 @@
 
-data <- read.csv2("D:/work related/rMOMO/euromomo/delay.txt")
+data <- read.csv2("delay.txt")
 
 data2<-addconditions(data)
 

@@ -45,10 +45,11 @@ baseline <- function(data, seasonality =TRUE, ...){
   if(!inherits(fit,"try-error")) {
 
   # STEP 4: Prediction of the model
-  pred <- predict(fit, newdata = data, type = "response", se=TRUE)
+  pred <- predict(fit, newdata = data, type = "link", se=TRUE)
 
   # Attach fitted values to dataset
-  data$pnb <- pred$fit
+  invlink<-family(fit)$linkinv
+  data$pnb <- invlink(pred$fit)
 
   # Attach predistion variance to dataset
   data$v.pnb <- pred$se.fit^2
@@ -108,3 +109,32 @@ addweeks<-function(data){
   data$wk <- c(1:nrow(data))
   return(data)
 }
+
+#' Append zscores to the EuroMoMo data
+#'
+#' @param data a data frame in EuroMoMo format
+#' @value a data frame in EuroMoMo format
+#' @export
+zscore <- function(data) {
+  data$Zscore <-  with(data,(cnb^(2/3) - pnb^(2/3)) / ((4/9)*(pnb^(1/3))*(overdispersion+pnb*(v.pnb)))^(1/2))
+
+  return(data)
+}
+
+#' Excess estimation
+#'
+#' Calculates confidence intervals for the prediction and excess
+#'
+#' @param data a data frame in EuroMoMo format
+#' @param multiplier how many approximate standard deviations to use?
+#' @value a data frame in EuroMoMo format
+#' @export
+excess<-function(data,multiplier=2){
+  data$u.pnb<-with(data,(pnb^(2/3)+ multiplier*((4/9)*(pnb^(1/3))*(overdispersion+(v.pnb)*(pnb)))^(1/2))^(3/2) )
+  data$l.pnb<-with(data,pmax(0,pnb^(2/3)- multiplier*((4/9)*(pnb^(1/3))*(overdispersion+(v.pnb)*(pnb)))^(1/2))^(3/2) )
+  data$excess<-with(data,cnb-pnb)
+  data$u.excess<-with(data,cnb-u.pnb)
+  data$l.excess<-with(data,cnb-l.pnb)
+  return(data)
+}
+
