@@ -11,7 +11,7 @@ library(foreign)
 delay.nb <- function(rTDF.cum, holidays.filename) {
   # temporal assingment of objects
   rTDF.cum <- rTDF
-  holidays.filename <- "../data/IEH3.dta"
+  holidays.filename <- "data/IEH3.dta"
 
   # Read holiday data (assuming it is a stata file, to be changed in the future)
   holiday.data <- read.dta(file = holidays.filename)

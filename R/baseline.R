@@ -157,6 +157,7 @@ addweeks<-function(data,group=NULL){
 #' @value a data frame in EuroMoMo format
 #' @export
 zscore <- function(data) {
+  ## FIXME: move the calculation so that you can plug the variance from the delay directly into account
   data$Zscore <-  with(data,(cnb^(2/3) - pnb^(2/3)) / ((4/9)*(pnb^(1/3))*(overdispersion+pnb*(v.pnb)))^(1/2))
 
   return(data)
