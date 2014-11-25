@@ -13,10 +13,9 @@
 #'@param debug if true print extensive information
 #'@export
 loadDefaults<-function(debug=FALSE) {
-  files0<-system.file("extdata","defaults.txt",package="euromomo")
-  files1<-list.files(patt="^defaults-.*[.]dat$")
-  files2<-list.files(patt="^defaults-.*[.]txt$")
-  files<-c(files0,sort(files1),sort(files2))
+#   files0<-system.file("extdata","defaults.txt",package="euromomo")
+
+  files<-list.files(patt="^defaults-.*[.]txt$")
   if(length(files)==0) warning("No defaults files found, using package defaults")
   if(debug) cat("Using these files: ",paste(files,collapse=", "),"\n")
   dats<-unlist(sapply(files,readLines))
@@ -24,22 +23,36 @@ loadDefaults<-function(debug=FALSE) {
   dats<-dats[nchar(dats)>0]
   if(debug) print(head(dats))
   #splits<-strsplit(dats,"=")
+  # Split on the first equal sign
   splits <- regmatches(dats, regexpr("=",dats), invert=TRUE)
 
-  labels<-sapply(splits,function(a) strsplit(a[1],"[.]")[[1]])
-  values<-sapply(splits,function(a) a[2])
-  optmat<-t(rbind(labels,values))
-  out<-list()
-  for(i in 1:nrow(optmat)) {
-    country<-optmat[i,1]
-    chapter<-optmat[i,2]
-    option <-optmat[i,3]
-    if(!country%in%names(out))
-      out[[country]]<-list()
-    if(!chapter%in%names(out[[country]]))
-      out[[country]][[chapter]]<-list()
-    out[[country]][[chapter]][[option]]<-optmat[i,4]
+#   labels<-sapply(splits,function(a) strsplit(a[1],"[.]")[[1]])
+#   values<-sapply(splits,function(a) a[2])
+#   optmat<-t(rbind(labels,values))
+
+
+  out<-list(exception=list(), groups=list())
+
+for(i in 1:length(splits)) {
+
+    if(!grepl("^(group\\.|except$)", splits[[i]][1])){
+      label <- splits[[i]][1]
+      value <- splits[[i]][2]
+      out[[label]] <- value
+    } else {
+      if(grepl("^group\\.", splits[[i]][1])){
+        group <- strsplit(splits[[i]],"[.]")[[1]][2:3]
+        out$groups[[group[1]]][[group[2]]] <- splits[[i]][2]
+      } else{
+
+        StartEnd <- c(strsplit(splits[[i]][2], ":"))
+        out$exception <- rbind(out$exception, StartEnd[[1]])
+      }
+
+    }
+
   }
+
   options(euromomo=out)
   invisible(out)
 }

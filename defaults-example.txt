@@ -6,21 +6,21 @@ Workdirectory=c:/.....
 InputFile=DoD_DoR.txt
 HolidayFile=Work.txt
 BaselineSeasons=5
-StartDelayEst=2008-01-01
+StartDelayEst=2008-W01
 
 ### GROUPS ###
 group.1.defintion=(age<5)
 group.1.label=0-4
-group.2=((5<=age)&(age<15)
-group.1.label=5-14
-group.3=((15<=age)&(age<65)
-group.1.label=15-64
-group.4=(65<=age)
-group.1.label=65+
-group.5=(0<=age)
-group.1.label=Total
-group.6=(20<=age)&(age<45)&(sex='M')
-group.1.label=A very special group
+group.2.defintion=((5<=age)&(age<15)
+group.2.label=5-14
+group.3.defintion=((15<=age)&(age<65)
+group.3.label=15-64
+group.4.defintion=(65<=age)
+group.4.label=65+
+group.5.defintion=(0<=age)
+group.5.label=Total
+group.6.defintion=(20<=age)&(age<45)&(sex='M')
+group.6.label=A very special group
 
 ### Baseline dependent on group ###
 group.1.seasonality=0
