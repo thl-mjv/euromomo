@@ -37,8 +37,8 @@ parseDefaultsFile <- function(fileName, debug=FALSE) {
   # Split each line on the first equal sign
   splits <- regmatches(dats, regexpr("=",dats), invert=TRUE)
 
-  # Initialize option object containing exception and groups slot.
-  out <- list(exception=list(), groups=list())
+  # Initialize option object containing except and groups slot.
+  out <- list(except=list(), groups=list())
 
   # Loop over all remaining lines.
   for(i in 1:length(splits)) {
@@ -55,7 +55,7 @@ parseDefaultsFile <- function(fileName, debug=FALSE) {
       } else { #except definition
         #Start & End of date range & add to list
         startEnd <- c(strsplit(splits[[i]][2], ":"))
-        out$exception <- rbind(out$exception, startEnd[[1]])
+        out$except <- rbind(out$except, startEnd[[1]])
       }
     }
   }
@@ -66,7 +66,7 @@ parseDefaultsFile <- function(fileName, debug=FALSE) {
 
 #' Function to check, if the currently list stored in options("euromomo")
 #' is semantically valid. At the moment, this check consists of:
-#' 1. Check for all entries in 'exception' that dStart <= dEnd
+#' 1. Check for all entries in 'except' that dStart <= dEnd
 #' 2. Each group has a 'definition' and a 'label' attribute.
 #' 3. That all Boolean Attributes (e.g. 'trend' and 'seasonality') are really Booleans.
 #' At the first error the function stops.
@@ -92,12 +92,12 @@ checkOptions <- function() {
   }
 
 
-  #Check that ISO weeks of exception are valid.
-  dStart <- ISOweek::ISOweek2date(paste(opts$exception[,1],"-1",sep=""))
-  dEnd <- ISOweek::ISOweek2date(paste(opts$exception[,2],"-1",sep=""))
+  #Check that ISO weeks of except are valid.
+  dStart <- ISOweek::ISOweek2date(paste(opts$except[,1],"-1",sep=""))
+  dEnd <- ISOweek::ISOweek2date(paste(opts$except[,2],"-1",sep=""))
   if (any(dStart > dEnd)) {
     idx <- which(dStart > dEnd)
-    stop(paste("dStart > dEnd for entries:", paste(opts$exception[idx,],collapse=" : ")))
+    stop(paste("dStart > dEnd for entries:", paste(opts$except[idx,],collapse=" : ")))
   }
 
   #Check that each group has at least the two necessary attributes
