@@ -141,12 +141,14 @@ addconditions <- function(data, spring=15:26, autumn=36:45, duration=5*52, last=
 #' @param group which group to use. Groups are defined using variables so this must be a name of an actual variable in the data
 #' @return EuroMOMO data with extra variables with YearWeek and trend variable
 #' @export
-addweeks<-function(data,group=NULL){
+addweeks <- function(data,group=NULL){
   # Checks
-  if(!"ISOweek"%in%names(data)) stop("Invalid data")
-  if(!all(c("YoDi","WoDi")%in%names(data))) {
-    data$YoDi<-as.numeric(substring(as.character(data$ISOweek),1,4))
-    data$WoDi<-as.numeric(substring(as.character(data$ISOweek),7))
+  if(!"ISOweek" %in% names(data)) stop("Invalid data")
+  if(!all(c("YoDi","WoDi") %in% names(data))) {
+    #data$YoDi<-as.numeric(substring(as.character(data$ISOweek),1,4))
+    #data$WoDi<-as.numeric(substring(as.character(data$ISOweek),7))
+    data$YoDi<- ISOyear( as.character(data$ISOweek))
+    data$WoDi<- ISOweek( as.character(data$ISOweek))
   }
 
   # Subset to right group
