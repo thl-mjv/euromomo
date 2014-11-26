@@ -27,15 +27,22 @@
 #' @export
 baseline <- function(data, seasonality =1, trend=1,group=NULL,...){
   # STEP 1: Calculate the trend (ISOweek) as continuous)
+  if(is.null(trend))
+    trend<-as.numeric(getOption("euromomo")$trend)
+  if(is.null(trend)) trend<-0
+  if(is.character(trend)) trend<-as.numeric(eval(parse(text=trend)))
+
   data<-addweeks(data,group=group)
   # possible spline basis generation goes here
   # splines removed
 
   # STEP 2: Calculate the sin-cos trends
   if(is.null(seasonality))
-    seasonality<-as.numeric(getOption("euromomo")$all$baseline$seasonality)
+    seasonality<-as.numeric(getOption("euromomo")$seasonality)
   if(is.null(seasonality)) seasonality<-0
-  print(seasonality)
+  if(is.character(seasonality)) seasonality<-as.numeric(eval(parse(text=seasonality)))
+
+
   if(seasonality>0) {
     # Consider if we want have warning or change this silently
     if(seasonality>1) warning("Only one length of seasonality allowed")
