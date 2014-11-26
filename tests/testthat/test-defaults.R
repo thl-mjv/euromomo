@@ -1,17 +1,19 @@
 context("Parsing the Defaults file.")
 
+#warning("Current working directory:")
+#warning(getwd())
 #setwd("../tests/testthat")
 
-#Read the default bogus defaults-example file
-parseDefaultsFile("defaults-example.txt")
+#Read the default bogus defaults-example file in the testthat directory.
+#parseDefaultsFile(file.path("tests","testthat","defaults-test.txt"))
+parseDefaultsFile("defaults-test.txt")
 opts <- getOption("euromomo")
 
-test_that("Missing Important Variables",
-          expect_error(checkOptions(),
-                       "The following variable names are missing: WorkDirectory"))
-
-opts[["WorkDirectory"]] <- "C:/foobar/foobarbar"
-options(euromomo=opts)
+# test_that("Missing Important Variables",
+#           expect_error(checkOptions(),
+#                        "The following variable names are missing: WorkDirectory"))
+#opts[["WorkDirectory"]] <- "C:/foobar/foobarbar"
+#options(euromomo=opts)
 
 test_that("dStart > dEnd",
           expect_error(checkOptions(),
@@ -19,15 +21,15 @@ test_that("dStart > dEnd",
 
 #Modify
 opts <- getOption("euromomo")
-opts[["exception"]][2,2] <- "2008-W03"
+opts[["except"]][2,2] <- "2008-W03"
 options(euromomo=opts)
 #checkOptions()
 
 test_that("trend is logical",
           expect_error(checkOptions(),
-                      "Attribute \"trend\" of group \"1\" is not logical"))
+                      "Attribute \"trend\" of group \"momodefault1\" is not logical"))
 
-opts[["groups"]][["1"]]["trend"] <- "TRUE"
+opts[["groups"]][["momodefault1"]]["trend"] <- "TRUE"
 options(euromomo=opts)
 
 checkOptions()

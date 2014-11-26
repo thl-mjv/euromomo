@@ -1,8 +1,0 @@
-###
-####
-all.baseline.spring=15:25
-all.baseline.autumn=33:46
-all.baseline.duration=261
-all.baseline.seasonality=2
-all.baseline.spline=none
-

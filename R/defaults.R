@@ -10,17 +10,16 @@
 #'@export
 
 parseDefaultsFile <- function(fileName, debug=FALSE) {
-  #Here there would be the possibility to add extra files
-  #containing, e.g. default parameter configrations
-  #defaultFile <- NULL #list.files(patt="^defaults-.*[.]txt$")
+  #Read in file with default parameter configrations
+  if (file.exists(system.file("extdata", "defaults.txt", package="euromomo"))) {
+    cat("Using package file.\n")
+    defaultFile <- system.file("extdata", "defaults.txt", package="euromomo")
+  } else {
+    cat("Using: ", file.path(paste(getwd(), "/inst/extdata", sep=""), "defaults.txt") ,"\n")
+    defaultFile <- file.path(paste(getwd(), "/inst/extdata", sep=""), "defaults.txt") 
+  }
 
-#   defaultFile <- system.file("extdata", "defaults.txt", package="euromomo")
-
-  #### Temporary default file - TO BE DELETED- ####
-    # Load library
-  defaultFile <- file.path(paste(getwd(), "/inst/extdata", sep=""), "defaults.txt")
-  #################################################
-
+  #Make the list of files.
   files <- c(defaultFile, fileName)
 
   if(length(files)==0) stop("No parameter configuration file found.")
