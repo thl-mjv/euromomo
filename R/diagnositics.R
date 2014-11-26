@@ -1,6 +1,4 @@
 # Load packages
-library("ISOweek")
-library("foreign")
 
 #' R function for delay corretion based on negative binomial distribution
 #' @param data is a dataframe with aggregated number of reported deaths, baseline, Zscores
