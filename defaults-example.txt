@@ -7,6 +7,7 @@ InputFile=DoD_DoR.txt
 HolidayFile=Work.txt
 BaselineSeasons=5
 StartDelayEst=2008-W01
+nWorkdays=5
 
 ### GROUPS ###
 group.1.definition=(age<5)
