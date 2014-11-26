@@ -10,7 +10,7 @@ euromomoCntrl <- list(
   fileName = "data/DoD_DoR.txt",
   #Format for how Dates are specified
   #dateFormat <- "%d.%m.%Y"
-  dateFormat = "%Y/%m/%d", #
+  dateFormat = "%Y-%m-%d", #
   #Choose the number of weeks to remove for modeling delay (Parameter?)
   back = 6,
   #Day of aggregation (a thursday)
