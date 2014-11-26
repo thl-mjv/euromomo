@@ -8,7 +8,7 @@ HolidayFile=data/holidays.txt
 BaselineSeasons=5
 StartDelayEst=2008-W01
 DayOfAggregation=2013-01-03
-nworkdays=5
+nWorkdays=5
 
 ### GROUPS ###
 group.momodefault1.definition=(age<5)
