@@ -39,3 +39,7 @@ ISOseasonStart <- function(x){
   return(Year.season)
 }
 
+#' Simple check function before pushing.
+checkBeforePush <- function() {
+  rm(list=ls()) ; source("momomaster.R")
+}

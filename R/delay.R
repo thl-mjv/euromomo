@@ -1,7 +1,7 @@
 #' Manage the holiday files
 #'
 #' @param holiday.filename name of the file
-#' @value a data.frame with columns ISOweek and something
+#' @param a data.frame with columns ISOweek and something
 #' @export
 holiday <- function(holiday.filename = "data/holidays.txt") {
   # Read holiday data
@@ -22,7 +22,7 @@ holiday <- function(holiday.filename = "data/holidays.txt") {
 #' @param method either "poisson" or "negbin"
 #' @param ... other options passed to actual algorithms
 #' @param holiday file with holiday definitions
-#' @value a data frame with added column for delay corrected number of deaths and it's estimated variance
+#' @param a data frame with added column for delay corrected number of deaths and it's estimated variance
 #' @export
 
 delay <- function(data,
@@ -42,7 +42,7 @@ delay <- function(data,
 #' @param openvar which version of the variable "open" to user=
 #' @param delaytype which kind of effect for the delay variable?
 #' @param holiday file with holiday definitions
-#' @value a data frame with added column for delay corrected number of deaths and it's estimated variance
+#' @return a data frame with added column for delay corrected number of deaths and it's estimated variance
 #' @export
 delay.poisson <- function(rTDF,
                        method=c("poisson","negbin"),
