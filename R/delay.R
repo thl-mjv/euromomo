@@ -122,7 +122,8 @@ delay.poisson <- function(rTDF,
   # FIXME: check if there observation triangles are included
   delay.model <- glm(formula(delay.formula),
                      subset= !is.na(USEweek),
-                     data = rTDF.long, family = quasipoisson(), na.action = na.exclude)
+                     data = rTDF.long, family = quasipoisson(),
+                     na.action = na.exclude)
   # Predict expected number of reported deaths
   rTDF.pred <- subset(rTDF.long, subset = as.numeric(delay) == max(as.numeric(delay)))
   delay.pred<-predict(delay.model, newdata =rTDF.pred, type = "response",se=TRUE)
@@ -138,8 +139,16 @@ delay.poisson <- function(rTDF,
   rTDF.pred$ v.cnb <- with(rTDF.pred,ifelse(is.na(wr),vp.cnb+p.cnb-onb,0))
   # clean up the names
   rTDF.pred$nb<-rTDF.pred$wr
+  # overdispersion
+  od<-summary(delay.model)$dispersion
+  if(is.null(od)) od<-1
+  rTDF.pred$od.nb<-rep(od,nrow(rTDF.pred))
   # output smthn for dem baseliners
-  return(rTDF.pred[,c("ISOweek","nb","onb","cnb","v.cnb")])
+  keep.vars<-c("ISOweek","nb","onb","cnb","v.cnb","od.nb")
+  trykeep<-keep.vars[keep.vars%in%names(rTDF.pred)]
+  if(any(!keep.vars%in%trykeep))
+    warning(paste("Variables",paste(keep.vars[!keep.vars%in%trykeep],collapse=","),"missing"))
+  return(rTDF.pred[,trykeep])
 }
 
 
