@@ -4,24 +4,12 @@
 #
 
 output.graph <- function(data) {
-  # **This part should be deleted in the final version
-  # Temporal assignment of data, first run testing-base.R
-  data <- final
-  # Add additional information (to be added: should be part of data already)
-  data <- within(data, {
-    Version <- "v4-3"
-    Model <- "LINE"
-    source <- "HPA"
-    group <- "Total"
-  })
-  # **to here
-
   #
   # Graph: crude mortality
   #
 
   # Open connection to png file
-  filename <- paste0("Graph-Number_of_deaths-", data$group[1], ".png")
+  filename <- paste0("Graph-Number_of_deaths-", groupOpts["label"], ".png")
   png(filename = file.path(week.dir, "output", filename), width = 1920, height = 1080, units = "px", pointsize = 20)
 
   # Create layout: one for the graph, one for the legend
@@ -35,7 +23,7 @@ output.graph <- function(data) {
     axis(side = 1, at = idx, labels = ISOweek[idx])
     axis(side = 2)
     box()
-    title(main = paste("Number of deaths -", ISOweek[nrow(data)], "\n", getOption("euromomo")$Country, "- Group", group[1]))
+    title(main = paste("Number of deaths -", ISOweek[nrow(data)], "\n", getOption("euromomo")$Country, "- Group", groupOpts["label"]))
     # Add the graphs
     lines(x = 1:nrow(data), y = onb, col = "black")
     lines(x = 1:nrow(data), y = ifelse(CondDelays == 0, cnb, NA), col = "green")
@@ -69,7 +57,7 @@ output.graph <- function(data) {
   #
 
   # Open connection to png file
-  filename <- paste0("Graph-Zscore-", data$group[1], ".png")
+  filename <- paste0("Graph-Zscore-", groupOpts["label"], ".png")
   png(filename = file.path(week.dir, "output", filename), width = 1920, height = 1080, units = "px", pointsize = 20)
 
   # Create layout: one for the graph, one for the legend
@@ -85,7 +73,7 @@ output.graph <- function(data) {
     abline(h =  seq(from = -20, to = 20, by = 2), col = "yellow")
     abline(h = 0, col = "red")
     box()
-    title(main = paste("Z-score -", ISOweek[nrow(data)], "\n", getOption("euromomo")$Country, "- Group", group[1]))
+    title(main = paste("Z-score -", ISOweek[nrow(data)], "\n", getOption("euromomo")$Country, "- Group", groupOpts["label"]))
         # Add the graphs
     lines(x = 1:nrow(data), y = Zscore, col = "black")
     lines(x = 1:nrow(data), y = ifelse(CondSeason == 1, Zscore, NA), col = "blue")
@@ -114,17 +102,6 @@ output.graph <- function(data) {
 #
 
 output.table <- function(data) {
-  # **This part should be deleted in the final version
-  # Temporal assignment of data, first run testing-base.R
-  data <- final
-  # Add additional information (to be added: should be part of data already)
-  data <- within(data, {
-    Version <- "v4-3"
-    Model <- "LINE"
-    source <- "HPA"
-    group <- "Total"
-  })
-  # **to here
 
   # Define variable that defines winter and summer season
   data <- within(data, season <- ifelse(WoDi >= 40 | WoDi <= 20, paste0("Winter-", YoDi-(WoDi <= 20)), paste0("Summer-", YoDi)))
@@ -146,6 +123,6 @@ output.table <- function(data) {
   cummort.data <- do.call(what = "rbind", args = tmp)
 
   # Save cummort.data in a text file
-  filename <- paste0("Cumulative_mortality_", data$group[1], ".txt")
+  filename <- paste0("Cumulative_mortality_", groupOpts["label"], ".txt")
   capture.output(print(cummort.data), file = file.path(week.dir, "output", filename))
 }
