@@ -4,6 +4,23 @@
 #' @param b an alternative
 #' @return another value
 #' @export
-na.0<-function(a,b=0) {
+na.0 <- function(a,b=0) {
   ifelse(is.na(a),b,a)
+}
+
+#' Function to extract the week of the year (WOY) as decimal number (00–53) 
+#' (i.e. not the year, just the number) from an ISOweek::ISOweek generated date. 
+#' Example: For 2013-W13 this would be 13.
+#' 
+#' @param x A vector of ISOweek::ISOweek generated objects.
+#' @return Vector of numeric each being between 00-53.
+#' @export
+#' 
+
+ISOwoy <- function(x) {
+  as.numeric(gsub("(^[0-9]+)(-W)([0-9]{2})","\\3",x))
+}
+
+ISOyear <- function(x) {
+  as.numeric(gsub("(^[0-9]+)(-W)([0-9]{2})","\\1",x))
 }
