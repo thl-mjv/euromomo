@@ -123,7 +123,7 @@ output <- function(data) {
   cummort.data <- do.call(what = "rbind", args = tmp)
 
   # Save cummort.data in a text file
-  filename <- paste0("Table-Cumulative_mortality_", groupOpts["label"], ".txt")
+  filename <- paste0("Table-Cumulative_mortality-", groupOpts["label"], ".txt")
   capture.output(print(cummort.data), file = file.path(week.dir, "output", filename))
 
   #
