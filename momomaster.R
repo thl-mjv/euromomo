@@ -84,8 +84,7 @@ for(i in groups) {
   tail(data5)
 
   # Generate output
-  output.graph(data5)
-  output.table(data5)
+  output(data5)
 
   # MISSING: format the output
   # Store the results
