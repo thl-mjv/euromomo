@@ -19,7 +19,7 @@ test_that("dStart > dEnd",
 
 #Modify
 opts <- getOption("euromomo")
-opts[["exception"]][2,2] <- "2008-W03"
+opts[["except"]][2,2] <- "2008-W03"
 options(euromomo=opts)
 #checkOptions()
 

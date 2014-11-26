@@ -1,6 +1,6 @@
 ### PARAMETERS ####
-Country=Denmark
-Counties=Seeland,Jylland
+Country=SelectCoutrny
+Counties=SelectCounties
 Institution=ISS
 WorkDirectory=c:/.....
 InputFile=DoD_DoR.txt
@@ -9,19 +9,30 @@ BaselineSeasons=5
 StartDelayEst=2008-W01
 nWorkdays=5
 
+
 ### GROUPS ###
 group.1.definition=(age<5)
 group.1.label=0-4
-group.2.definition=((5<=age) & (age<15)
+group.2.definition=((5<=age) & (age<15))
 group.2.label=5-14
-group.3.definition=((15<=age) & (age<65)
+group.3.definition=((15<=age) & (age<65))
 group.3.label=15-64
 group.4.definition=(65<=age)
 group.4.label=65+
 group.5.definition=(0<=age)
 group.5.label=Total
-group.6.definition=(20<=age) & (age<45) & (sex=='M')
+group.6.definition=(20<=age) & (age<45) & (gender=='male')
 group.6.label=A very special group
+
+
+### Back weeks for delay-adjustment dependent on group ###
+group.1.back=6
+group.2.back=6
+group.3.back=6
+group.4.back=6
+group.5.back=6
+group.6.back=6
+
 
 ### Baseline dependent on group ###
 group.1.seasonality=FALSE
@@ -36,6 +47,7 @@ group.5.seasonality=TRUE
 group.5.trend=TRUE
 group.6.seasonality=TRUE
 group.6.trend=FALSE
+
 
 ### ISO weels of general exception periods ###
 spring=15:26
