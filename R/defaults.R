@@ -13,7 +13,7 @@ parseDefaultsFile <- function(fileName, debug=FALSE) {
   #Here there would be the possibility to add extra files
   #containing, e.g. default parameter configrations
   #defaultFile <- NULL #list.files(patt="^defaults-.*[.]txt$")
-<<<<<<< HEAD
+
 #   defaultFile <- system.file("extdata", "defaults.txt", package="euromomo")
 
   #### Temporary default file - TO BE DELETED- ####
@@ -22,20 +22,13 @@ parseDefaultsFile <- function(fileName, debug=FALSE) {
   #################################################
 
   files <- c(defaultFile, fileName)
-=======
-  files <- fileName
->>>>>>> 909535b0e83d7bd6d09b1ec61cfb4d4648d0aef5
+
   if(length(files)==0) stop("No parameter configuration file found.")
   if(debug) cat("Using these files: ",paste(files,collapse=", "),"\n")
 
   #Read all files
   dats <- unlist(sapply(files,readLines))
 
-<<<<<<< HEAD
-
-
-=======
->>>>>>> 909535b0e83d7bd6d09b1ec61cfb4d4648d0aef5
   #Strip lines starting with comment symbol and remove empty lines.
   dats <- dats[!grepl("^#",dats)]
   dats <- dats[nchar(dats)>0]
