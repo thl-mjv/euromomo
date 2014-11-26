@@ -26,7 +26,7 @@ output.graph <- function(data) {
 
   # Open connection to png file
   filename <- paste0("Graph-Number_of_deaths-", data$group[1], ".png")
-  png(filename = file.path(week.dir, filename), width = 1920, height = 1080, units = "px", pointsize = 20)
+  png(filename = file.path(week.dir, "output", filename), width = 1920, height = 1080, units = "px", pointsize = 20)
 
   # Create layout: one for the graph, one for the legend
   layout(mat = matrix(c(1, 2), nrow = 2, ncol = 1), heights = c(4, 1))
@@ -74,7 +74,7 @@ output.graph <- function(data) {
 
   # Open connection to png file
   filename <- paste0("Graph-Zscore-", data$group[1], ".png")
-  png(filename = file.path(week.dir, filename), width = 1920, height = 1080, units = "px", pointsize = 20)
+  png(filename = file.path(week.dir, "output", filename), width = 1920, height = 1080, units = "px", pointsize = 20)
 
   # Create layout: one for the graph, one for the legend
   layout(mat = matrix(c(1, 2), nrow = 2, ncol = 1), heights = c(4, 1))
@@ -155,5 +155,5 @@ output.table <- function(data) {
 
   # Save cummort.data in a text file
   filename <- paste0("Cumulative_mortality_", data$group[1], ".txt")
-  capture.output(print(cummort.data), file = file.path(week.dir, filename))
+  capture.output(print(cummort.data), file = file.path(week.dir, "output", filename))
 }
