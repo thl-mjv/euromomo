@@ -3,13 +3,10 @@
 #' @param holiday.filename name of the file
 #' @value a data.frame with columns ISOweek and something
 #' @export
-holiday<-function(holiday.filename="data/IEH3.dta") {
+holiday <- function(holiday.filename = "data/holidays.txt") {
   # Read holiday data
-  if(grepl("[.]dta$",holiday.filename)) {
-    cat("Assuming the file is in Stata format")
-    require("foreign")
-    holiday.data <- read.dta(file = holiday.filename)
-  }
+  holiday.data <- read.table(holiday.filename, header = TRUE, sep = ";")
+
   # Add ISOweek tot holiday.data
   holiday.data <- within(holiday.data, {
     ISOweek <- ISOweek(date = date)

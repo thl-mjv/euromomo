@@ -10,7 +10,7 @@ output.graph <- function(data) {
 
   # Open connection to png file
   filename <- paste0("Graph-Number_of_deaths-", groupOpts["label"], ".png")
-  png(filename = file.path(week.dir, "output", filename), width = 1920, height = 1080, units = "px", pointsize = 20)
+  png(filename = file.path(week.dir, "output", filename), width = 800, height = 600, units = "px", pointsize = 12)
 
   # Create layout: one for the graph, one for the legend
   layout(mat = matrix(c(1, 2), nrow = 2, ncol = 1), heights = c(4, 1))
@@ -58,7 +58,7 @@ output.graph <- function(data) {
 
   # Open connection to png file
   filename <- paste0("Graph-Zscore-", groupOpts["label"], ".png")
-  png(filename = file.path(week.dir, "output", filename), width = 1920, height = 1080, units = "px", pointsize = 20)
+  png(filename = file.path(week.dir, "output", filename), width = 800, height = 600, units = "px", pointsize = 12)
 
   # Create layout: one for the graph, one for the legend
   layout(mat = matrix(c(1, 2), nrow = 2, ncol = 1), heights = c(4, 1))
