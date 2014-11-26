@@ -10,7 +10,9 @@ parseDefaultsFile("defaults-example.txt")
 checkOptions()
 
 #Change to working directory
-setwd( getOption("euromomo")$WorkDirectory)
+#setwd( getOption("euromomo")$WorkDirectory)
+## using debugmode creates the working directory to a temporary location
+week.dir<-directories(debugmode=TRUE)
 euromomoCntrl <- getOption("euromomo")
 momoFile <- readmomofile(getOption("euromomo"))
 
@@ -47,6 +49,7 @@ for(i in groups) {
 
   #rTList <- file2ReportingTriangle(getOption("euromomo")) # something about the group
   #Define nre function df2Reportiangle
+
   groupIndicator <- momo[, paste("group_",i,sep="")]
   back<-as.numeric(groupOpts["back"])
 
