@@ -25,7 +25,7 @@
 #' @param group which group to use. Groups are defined using variables so this must be a name of an actual variable in the data
 #' @return EuroMOMO data with predicted values, prediction variances and overdispersion
 #' @export
-baseline <- function(data, seasonality =NULL, group=NULL,...){
+baseline <- function(data, seasonality =1, group=NULL,...){
   # STEP 1: Calculate the trend (ISOweek) as continuous)
   data<-addweeks(data,group=group)
   # possible spline basis generation goes here
@@ -34,6 +34,8 @@ baseline <- function(data, seasonality =NULL, group=NULL,...){
   # STEP 2: Calculate the sin-cos trends
   if(is.null(seasonality))
     seasonality<-as.numeric(getOption("euromomo")$all$baseline$seasonality)
+  if(is.null(seasonality)) seasonality<-0
+  print(seasonality)
   if(seasonality>0) {
     # Consider if we want have warning or change this silently
     if(seasonality>1) warning("Only one length of seasonality allowed")
@@ -56,7 +58,6 @@ baseline <- function(data, seasonality =NULL, group=NULL,...){
   glm_form <- "cnb ~wk"
   if(seasonality>0)
     glm_form<-paste(glm_form,"+",paste(as.vector(outer(c("sin","cos"),1:seasonality,paste,sep="")),collapse="+"))
-  if(spline%in%c("linear","cubic")) glm_form<-paste(glm_form,"+basis")
 
   # Need to consider (at some point) whether to allow using other estimation functions (glm2, mgcv, ...)
   fit <- try(glm(formula(glm_form), data = data[data$cond==1, ], family = quasipoisson()))
@@ -71,7 +72,7 @@ baseline <- function(data, seasonality =NULL, group=NULL,...){
   data$pnb <- invlink(pred$fit)
 
   # Attach predistion variance to dataset
-  data$v.pnb <- pred$se.fit^2
+  data$lv.pnb <- pred$se.fit^2
 
   # Attach overdispersion values to dataset
   data$overdispersion <- summary(fit)$dispersion
@@ -157,7 +158,7 @@ addweeks<-function(data,group=NULL){
 #' @export
 zscore <- function(data,type=c("baseline","both")) {
   type<-match.arg(type)
-  blvars<-c("pnb","overdispersion","v.pnb")
+  blvars<-c("pnb","overdispersion","lv.pnb")
   # if we requested something needing baseline and it is not available, issue warnings and go away
   if(!all(blvars%in%names(data))&type%in%c("baseline","both")) {
     warning("No baseline found")
@@ -171,9 +172,9 @@ zscore <- function(data,type=c("baseline","both")) {
   }
 
   if(type=="baseline")
-    data$Zscore <-  with(data,(cnb^(2/3) - pnb^(2/3)) / ((4/9)*(pnb^(1/3))*(overdispersion+pnb*(v.pnb)))^(1/2))
+    data$Zscore <-  with(data,(cnb^(2/3) - pnb^(2/3)) / ((4/9)*(pnb^(1/3))*(overdispersion+pnb*(lv.pnb)))^(1/2))
   if(type=="both")
-    data$Zscore <- with(data,(cnb^(2/3) - pnb^(2/3)) / ((4/9)*(pnb^(1/3))*(overdispersion+v.cnb/pnb+pnb*(v.pnb)))^(1/2))
+    data$Zscore <- with(data,(cnb^(2/3) - pnb^(2/3)) / ((4/9)*(pnb^(1/3))*(overdispersion+v.cnb/pnb+pnb*(lv.pnb)))^(1/2))
 
   return(data)
 }
@@ -188,23 +189,23 @@ zscore <- function(data,type=c("baseline","both")) {
 #' @export
 excess<-function(data,multiplier=2,type=c("baseline","basedelay","delay","both")){
   type<-match.arg(type)
-  blvars<-c("pnb","overdispersion","v.pnb")
+  blvars<-c("pnb","overdispersion","lv.pnb")
   # if we requested something needing baseline and it is not available, issue warnings and go away
-  if(!all(blvars%in%names(data))&type%in%c("baseline","both","basedelay")) {
-    warning("No baseline found")
-    return(data)
-  }
+  #if(!all(blvars%in%names(data))&type%in%c("baseline","both","basedelay")) {
+   #warning("No baseline found")
+    #return(data)
+  #}
   dlvars<-c("cnb","v.cnb")
   # if we requested something needing baseline and it is not available, issue warnings and go away
-  if(!all(dlvars%in%names(data))&type%in%c("delay","both","basedelay")) {
-    warning("No baseline found")
-    return(data)
-  }
+  #if(!all(dlvars%in%names(data))&type%in%c("delay","both","basedelay")) {
+  #  warning("No baseline found")
+  #  #return(data)
+  #}
   if(type%in%c("baseline","both","basedelay")) {
     if(type=="baseline")
-      data$pv.pnb<-with(data,((4/9)*(pnb^(1/3))*(overdispersion+(v.pnb)*(pnb)))^(1/2))
+      data$pv.pnb<-with(data,((4/9)*(pnb^(1/3))*(overdispersion+(lv.pnb)*(pnb)))^(1/2))
     else
-      data$pv.pnb<-with(data,((4/9)*(pnb^(1/3))*(overdispersion+(v.cnb)/pnb+(v.pnb)*(pnb)))^(1/2))
+      data$pv.pnb<-with(data,((4/9)*(pnb^(1/3))*(overdispersion+(v.cnb)/pnb+(lv.pnb)*(pnb)))^(1/2))
     data$u.pnb<-with(data,(pnb^(2/3)+ multiplier*pv.pnb)^(3/2))
     data$l.pnb<-with(data,pmax(0,pnb^(2/3)- multiplier*pv.pnb)^(3/2))
     data$excess<-with(data,cnb-pnb)

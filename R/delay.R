@@ -8,7 +8,7 @@ holiday<-function(holiday.filename="data/IEH3.dta") {
   if(grepl("[.]dta$",holiday.filename)) {
     cat("Assuming the file is in Stata format")
     require("foreign")
-    holiday.data <- read.dta(file = holidays.filename)
+    holiday.data <- read.dta(file = holiday.filename)
   }
   # Add ISOweek tot holiday.data
   holiday.data <- within(holiday.data, {
