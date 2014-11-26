@@ -10,7 +10,9 @@ parseDefaultsFile("defaults-example.txt")
 checkOptions()
 
 #Change to working directory
-setwd( getOption("euromomo")$WorkDirectory)
+#setwd( getOption("euromomo")$WorkDirectory)
+## using debugmode creates the working directory to a temporary location
+week.dir<-directories(debugmode=TRUE)
 euromomoCntrl <- getOption("euromomo")
 momo <- readmomofile(getOption("euromomo"))
 
@@ -44,11 +46,11 @@ results.list<-list()
 for(i in groups) {
   #i<-"Total"
   groupOpts <- getOption("euromomo")[["groups"]][[i]]
-  
+
   #rTList <- file2ReportingTriangle(getOption("euromomo")) # something about the group
-  #Define nre function df2Reportiangle 
+  #Define nre function df2Reportiangle
   rTList <- df2ReportingTriangle(momo, groupIndicator) # something about the group
-  
+
   rTDF <- rT2DataFrame(rTList$cumRT)
   head(rTDF)
   ### OR read holidays HERE
