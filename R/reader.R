@@ -53,9 +53,9 @@ readmomofile <- function(euromomoCntrl) {
 #   momo$WoDi <- ISOwoy(momo$YWoDi)
 
 
-  ISOStartOfSeason <- seasonStart(ISOweek(dLastFullWeek))
+  ISOSeason <- ISOseasonStart(ISOweek(dLastFullWeek))
 
-  dStart <- paste(ISOyear(StartOfSeason) - as.numeric(euromomoCntrl$BaselineSeasons), "-W", ISOwoy(StartOfSeason), "-1", sep="")
+  dStart <- paste(ISOyear(ISOSeason) - as.numeric(euromomoCntrl$BaselineSeasons), "-W", ISOwoy(ISOSeason), "-1", sep="")
   dStart <- ISOweek2date(dStart)
 
   firstWeekInData <- min(momo$DoDMon) - (ISOweek::ISOweekday(min(momo$DoDMon)) - 1)
