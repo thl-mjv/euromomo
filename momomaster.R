@@ -74,6 +74,9 @@ for (i in groups) {
   # Generate output
   output(data5)
 
+  # Create diagnostic plots
+  diagnostic.plots(data5)
+
   # Store the results
   results.list[[i]]<-data5
 }
