@@ -12,11 +12,7 @@ output.graph <- function(data) {
     Version <- "v4-3"
     Model <- "LINE"
     source <- "HPA"
-    country <- "England"
     group <- "Total"
-    DateoA <- euromomoCntrl$dAggregation
-    WoAi <- as.numeric(substr(ISOweek::date2ISOweek(DateoA), start = 7, stop = 8))
-    YoAi <- as.numeric(substr(ISOweek::date2ISOweek(DateoA), start = 1, stop = 4))
   })
   # **to here
 
@@ -39,7 +35,7 @@ output.graph <- function(data) {
     axis(side = 1, at = idx, labels = ISOweek[idx])
     axis(side = 2)
     box()
-    title(main = paste("Number of deaths -", ISOweek[nrow(data)], "\n", country[1], "- Group", group[1]))
+    title(main = paste("Number of deaths -", ISOweek[nrow(data)], "\n", getOption("euromomo")$Country, "- Group", group[1]))
     # Add the graphs
     lines(x = 1:nrow(data), y = onb, col = "black")
     lines(x = 1:nrow(data), y = ifelse(CondDelays == 0, cnb, NA), col = "green")
@@ -89,7 +85,7 @@ output.graph <- function(data) {
     abline(h =  seq(from = -20, to = 20, by = 2), col = "yellow")
     abline(h = 0, col = "red")
     box()
-    title(main = paste("Z-score -", ISOweek[nrow(data)], "\n", country[1], "- Group", group[1]))
+    title(main = paste("Z-score -", ISOweek[nrow(data)], "\n", getOption("euromomo")$Country, "- Group", group[1]))
         # Add the graphs
     lines(x = 1:nrow(data), y = Zscore, col = "black")
     lines(x = 1:nrow(data), y = ifelse(CondSeason == 1, Zscore, NA), col = "blue")
@@ -126,11 +122,7 @@ output.table <- function(data) {
     Version <- "v4-3"
     Model <- "LINE"
     source <- "HPA"
-    country <- "England"
     group <- "Total"
-    DateoA <- euromomoCntrl$dAggregation
-    WoAi <- as.numeric(substr(ISOweek::date2ISOweek(DateoA), start = 7, stop = 8))
-    YoAi <- as.numeric(substr(ISOweek::date2ISOweek(DateoA), start = 1, stop = 4))
   })
   # **to here
 
