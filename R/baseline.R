@@ -92,7 +92,8 @@ baseline <- function(data, seasonality =1, trend=1,group=NULL,...){
   for(i in c(grep("^sin",names(data),value=TRUE),
              grep("^cos",names(data),value=TRUE),
              grep("^Cond",names(data),value=TRUE),
-             "wk","YoDi","WoDi")) data[[i]]<-NULL
+             "wk"#,"YoDi","WoDi"
+             )) data[[i]]<-NULL
 
   return(data)
 }

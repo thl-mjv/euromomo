@@ -61,18 +61,16 @@ for(i in groups) {
   data3 <- baseline(data2)
   tail(data3)
 
-  # Calculate Z-scores NOT NEEDED THESE ARE IN OUTPUT
-  #data4 <- zscore(data3)
+  # Calculate Z-scores
+  data4 <- zscore(data3)
 
   # Calculate excess
-  data5 <- excess(data3,type="baseli")
+  data5 <- excess(data4,type="baseli")
   #tail(data5)
 
   # Generate output
-  output.graph(data5)
-  output.table(data5)
+  output(data5)
 
-  # MISSING: format the output
   # Store the results
   results.list[[i]]<-data5
 }
