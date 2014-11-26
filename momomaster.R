@@ -12,10 +12,10 @@ checkOptions()
 #Change to working directory
 setwd( getOption("euromomo")$WorkDirectory)
 euromomoCntrl <- getOption("euromomo")
-momo <- readmomofile(getOption("euromomo"))
+momoFile <- readmomofile(getOption("euromomo"))
 
 #Create the groups (as stored in the option file)
-momo <- makeGroups(momo)
+momo <- makeGroups(momoFile$momo)
 
 # # Options for the aggregation
 # euromomoCntrl <- list(
@@ -44,11 +44,15 @@ results.list<-list()
 for(i in groups) {
   #i<-"Total"
   groupOpts <- getOption("euromomo")[["groups"]][[i]]
-  
+
   #rTList <- file2ReportingTriangle(getOption("euromomo")) # something about the group
-  #Define nre function df2Reportiangle 
-  rTList <- df2ReportingTriangle(momo, groupIndicator) # something about the group
-  
+  #Define nre function df2Reportiangle
+  groupIndicator <- momo[, paste("group_",i,sep="")]
+  back<-as.numeric(groupOpts["back"])
+
+
+  rTList <- df2ReportingTriangle(momo, groupIndicator, back, dWeeks=momoFile$dWeeks, dLastFullWeek=momoFile$dLastFullWeek) # something about the group
+
   rTDF <- rT2DataFrame(rTList$cumRT)
   head(rTDF)
   ### OR read holidays HERE
@@ -59,7 +63,7 @@ for(i in groups) {
   tail(drTDF,20)
 
   # Add conditions for the baseline estimation
-  data2<-addconditions(drTDF,spring=getOption("euromomo")$spring,autumn=getOption("euromomo")$autumn,delay=as.numeric(groupOpts["back"]))
+  data2<-addconditions(drTDF,spring=getOption("euromomo")$spring,autumn=getOption("euromomo")$autumn,delay=back)
   summary(data2)
 
   # Estimate baseline

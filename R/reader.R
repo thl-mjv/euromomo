@@ -61,5 +61,6 @@ readmomofile <- function(euromomoCntrl) {
   cat("Removing",sum(!insideWeeks), "observations not within", paste(dStart,"-",dLastFullWeek),".\n")
   momo <- subset(momo, insideWeeks)
 
-  return(momo)
+
+  return(list(momo=momo,dWeeks=dWeeks, dLastFullWeek=dLastFullWeek))
 }
