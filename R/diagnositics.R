@@ -75,6 +75,7 @@ diagostic.plots <- function(data, plot.options=c("matrix", "singles", "none")) {
       plotscatter(data$pnb, data$cnb, title=paste("Deaths",groupOpts["label"],sep="-"))
     dev.off()
 
+
     #data used v baseline points
     filename <- paste0("diagnostics/Scatter-UsedData-",groupOpts["label"], ".png")
     png(filename = file.path(week.dir, filename))
