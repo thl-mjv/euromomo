@@ -1,10 +1,10 @@
 #' Create the needed directories
 #'
-#' @param wd if "lower", change directory to weekly outputs directory, if "upper" change directory aboe that
+#' @param wd if "none", do not change the working directory, if "lower", change directory to weekly outputs directory, if "upper" change directory aboe that
 #' @param debugmode if TRUE use for debugging
 #' @value name of the working subdirectory
 #' @export
-directories<-function(wd=c("upper","lower"),debugmode=FALSE) {
+directories<-function(wd=c("none","upper","lower"),debugmode=FALSE) {
   opts<-getOption("euromomo")
   if(debugmode)
     root<-tempdir()
@@ -22,7 +22,7 @@ directories<-function(wd=c("upper","lower"),debugmode=FALSE) {
   if(inherits(ok,"try-error")) stop("Could not create working subdirectory")
   if(match.arg(wd)=="upper")
     setwd(week.dir)
-  else
+  if(match.arg(wd)=="lower")
     setwd(root)
   for(i in c("diagnostics","complete"))
     dir.create(file.path(week.dir,i))
