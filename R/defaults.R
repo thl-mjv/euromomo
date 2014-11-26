@@ -110,6 +110,19 @@ checkOptions <- function() {
       }
     }
   }
+  
+  #Check optional parameters of type from:to (where both from and to are integers)
+  fromToVarNames <- c("spring","autumn")
+  for (i in 1:length(fromToVarNames)) {
+    if (fromToVarNames[i] %in% names(opts)) {
+      #Check that in format from:to
+      fromto <- strsplit( opts[[fromToVarNames[i]]], ":")[[1]]
+      if (any(is.na(as.numeric(fromto)))) {
+        stop("Definition of \"",fromToVarNames[i],"\" is not in the format from:to.\n")
+      }
+    }
+  }  
+  
   #If we get here there were no errors.
   invisible(TRUE)
 }
