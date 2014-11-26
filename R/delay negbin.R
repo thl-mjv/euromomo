@@ -30,7 +30,6 @@ delay.nb <- function(rTDF, holiday) {
                    NA)
     rm(closed)
   })
-  print(summary(hTDF))
   # Add shifted vector with working days to hTDF for the number of delays
   for (i in 1:back) {
     hTDF <- cbind(hTDF, c(rep(NA, i), hTDF$open[1:(nrow(hTDF)-i)]))
@@ -63,7 +62,8 @@ delay.nb <- function(rTDF, holiday) {
     nb = rTDF.cum[, ncol(rTDF.cum)],  # observed full
     onb = rTDF.last,                  # latest registered
     cnb = rTDF.cum[, ncol(rTDF.cum)], # to be filled with expected
-    v.cnb = 0) # to be filled with variance
+    v.cnb = 0, # to be filled with variance
+    od.nb = 1) # overdispersion is always 1
 
   # Calculate the expected number of deaths and the variance
   # and plug them into rTDF.pred

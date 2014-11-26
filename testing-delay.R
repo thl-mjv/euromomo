@@ -1,6 +1,7 @@
 holiday.file<-holiday()
 summary(holiday.file)
 summary(rTDF)
+tail(rTDF)
 opts<-options()$euromomo
 opts$StartDelayEst<-"2008-W01"
 options(euromomo=opts)
@@ -29,7 +30,7 @@ crTDFall<-rbind(cbind(crTDF1,type="n"),
                 cbind(crTDF4,type="nb"))
 crTDFall$u.cnb<-with(crTDFall,cnb+2*sqrt(v.cnb))
 crTDFall$l.cnb<-with(crTDFall,cnb-2*sqrt(v.cnb))
-
+crTDFall
 with(subset(crTDFall,as.character(ISOweek)>"2012-W45"),
      xyplot(onb+nb+cnb+u.cnb+l.cnb~(ISOweek)|type,
                       type="l",lwd=c(1,3,1,1,1),lty=c(1,1,1,2,2),col=c(1,1,2,3,3)))
