@@ -91,6 +91,15 @@ checkOptions <- function() {
     stop("The following variable names are missing: ",importantVarNames[idxMissing],"\n.")
   }
 
+  # Check that DayOfAggregation is given, otherwise replace with today's date
+  if(is.null(opts$DayOfAggregation)){
+    opts$DayOfAggregation <- Sys.Date()
+    warning(paste("DayOfAggregation was not given. SystemDate (", Sys.Date(), ") was used instead.\n", sep=""))
+  }
+  # Check if DayOfAggregation is valid.
+  if(as.Date(opts$DayOfAggregation)>Sys.Date()){
+    stop("Invalid DayOfAggregation given.\n")
+  }
 
   #Check that ISO weeks of except are valid.
   dStart <- ISOweek::ISOweek2date(paste(opts$except[,1],"-1",sep=""))
