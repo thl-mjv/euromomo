@@ -6,15 +6,9 @@
 #' @return no value as yet
 #' @export
 
-diagostic.plots <- function(data, plot.options=c("matrix", "singles", "none")) {
+diagnostic.plots <- function(data, plot.options=c("matrix", "singles", "none")) {
 # set matrix style output as default
   plot.options <- match.arg(plot.options)
-  # Add additional information (to be added: should be part of data already)
-    DateoA <- euromomoCntrl$dAggregation
-    WoAi <- as.numeric(substr(ISOweek::date2ISOweek(DateoA), start = 7, stop = 8))
-    YoAi <- as.numeric(substr(ISOweek::date2ISOweek(DateoA), start = 1, stop = 4))
-    current.folder <- "testdiagnostics"
-    #do histograms
 
   #plothist makes histograms
   plothist <- function(x, plotline=FALSE, title=NULL) {
@@ -93,7 +87,7 @@ diagostic.plots <- function(data, plot.options=c("matrix", "singles", "none")) {
   if(plot.options=="matrix"){
     # Open connection to png file
     filename <- paste0("Diagnostics ", groupOpts["label"], ".png")
-    png(filename = file.path(week.dir, "Diagnostics", filename), width = 1000, height = 600, units = "px", pointsize = 12)
+    png(filename = file.path(week.dir, "diagnostics", filename), width = 1000, height = 600, units = "px", pointsize = 12)
     par(mfrow = c(2,4))
     #hist for corrected number of deaths
     plothist(data$cnb, title="Deaths")

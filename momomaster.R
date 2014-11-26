@@ -57,7 +57,8 @@ for (i in groups) {
   data2<-addconditions(drTDF,
                        spring=getOption("euromomo")$spring,
                        autumn=getOption("euromomo")$autumn,
-                       delay=back)
+                       delay=back,
+                       last=getOption("euromomo")$DayOfAggregation)
   summary(data2)
 
   # Estimate baseline
@@ -73,6 +74,9 @@ for (i in groups) {
 
   # Generate output
   output(data5)
+
+  # Create diagnostic plots
+  diagnostic.plots(data5)
 
   # Store the results
   results.list[[i]]<-data5
