@@ -3,7 +3,7 @@
 #' @section graphs: graphs with crude mortality and z-scores
 #' @section table: table with cumulative mortality per season
 #' @section data: text file containing the original dataframe
-
+#' @export
 output <- function(data) {
   #
   # Graph: crude mortality

@@ -1,5 +1,9 @@
 ### READ DATA IN
-readmomofile <- function(euromomoCntrl) {
+#' Read in the momo data
+#' @return a raw data file
+#' @export
+readmomofile <- function() {
+  euromomoCntrl<-getOption("euromomo")
   #ISO format.
   dateFormat <- "%Y-%m-%d"
 

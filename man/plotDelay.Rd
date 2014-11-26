@@ -5,6 +5,14 @@
 \usage{
 plotDelay(df, back)
 }
+\arguments{
+\item{df}{a data frame}
+
+\item{back}{number of weeks in delay}
+}
+\value{
+nothing
+}
 \description{
 Show the delay as a function of time
 }

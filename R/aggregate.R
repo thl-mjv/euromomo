@@ -1,32 +1,13 @@
 library("ISOweek")
 
-#' Global variable containing euromomo control options. This is dirty and needs to be changed
-#' once the handling of parameters is established for the euromomo
-#' package.
-
-# euromomoCntrl <- list(
-#   #File with mortality data to read
-#   #fileName <- "../../../SampleData/CH_INPUT_19NOV14.CSV"
-#   fileName = "data/DoD_DoR.txt",
-#   #Format for how Dates are specified
-#   #dateFormat <- "%d.%m.%Y"
-#   dateFormat = "%Y-%m-%d", #
-#   #Choose the number of weeks to remove for modeling delay (Parameter?)
-#   back = 6,
-#   #Day of aggregation (a thursday)
-#   dAggregation = ISOweek::ISOweek2date("2013-W01-4"),
-#   #Standard number of working days in a week.
-#   nWorkdays=5
-# )
 
 #' R function for reading in and performing the aggregation necessary
 #' to get the reporting triangle.
 #' @param momo is a data.frame with the complete data
 #'        back is the number of weeks for delay-adjustment age group specific
 #'        groupindicator is the indicator of the age group for data aggregation
-#' @return A list containing the reporting triangle for each age group, the cumulated
-#' reporting triangle, the time points and the delays.
-
+#' @return A list containing the reporting triangle for each age group, the cumulated reporting triangle, the time points and the delays.
+#' @export
 df2ReportingTriangle <- function(momo, groupindicator, back, dWeeks, dLastFullWeek) {
 
   # Subsetting for the specific age group
@@ -98,12 +79,16 @@ df2ReportingTriangle <- function(momo, groupindicator, back, dWeeks, dLastFullWe
   return(list(cumRT=cumRT, rT=rT,dWeeks=dWeeks, delays=0:back))
 }
 
-#' Deprecated function to read IRISH data
+# Deprecated function to read IRISH data
 #aggregateIE <- function() {
 #  momo <- foreign::read.dta(file="../../SampleData/delay-Total-Ireland-2014-47.dta")
 #  head(momo,n=1)
 #}
 
+#' Turn a triangle into a data.frame
+#' @param rT an output from df2ReportingTriangle
+#' @return a data frame with column ISOweek and one column for each delay band
+#' @export
 rT2DataFrame <- function(rT) {
   colnames(rT) = paste("w",sprintf("%02d",as.numeric(colnames(rT))),sep="")
   df <- as.data.frame(rT)
@@ -113,10 +98,15 @@ rT2DataFrame <- function(rT) {
 }
 
 #' Show the delay as a function of time
+#' @param df a data frame
+#' @param back number of weeks in delay
+#' @return nothing
+#' @export
 plotDelay <- function(df, back) {
   delayIdx <-  grep("^w[0-9]+$",colnames(df))
   #maxDelay <- length(delayIdx) - 1
   total <- df[,max(delayIdx)]
   matplot(1:nrow(df), df[,delayIdx]/matrix(total,nrow=nrow(df),ncol=back+1,byrow=FALSE),type="l",lty=1,ylab="Proportion of total",xlab="Time",ylim=c(0,1))
+  invisible(NULL)
 }
 
