@@ -5,9 +5,9 @@
 #' @param holiday file with holiday definitions
 #' @value a data frame with added column for delay corrected number of deaths and it's estimated variance
 #' @export
-
-
 delay.nb <- function(rTDF, holiday) {
+  # options
+  opts<-options()$euromomo
   # temporal assingment of objects
   rTDF.cum <- rTDF
 
@@ -21,9 +21,13 @@ delay.nb <- function(rTDF, holiday) {
 
   # Convert closed days to open days and add standard working days
   hTDF <- within(hTDF, {
-    open <- euromomoCntrl$nWorkdays - closed
+    # only use the weeks larger than StartDelayEst
+    open <- ifelse(as.character(ISOweek)>=opts$StartDelayEst,
+                   euromomoCntrl$nWorkdays - closed,
+                   NA)
     rm(closed)
   })
+  print(summary(hTDF))
   # Add shifted vector with working days to hTDF for the number of delays
   for (i in 1:euromomoCntrl$back) {
     hTDF <- cbind(hTDF, c(rep(NA, i), hTDF$open[1:(nrow(hTDF)-i)]))

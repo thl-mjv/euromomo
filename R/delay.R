@@ -104,9 +104,13 @@ delay.poisson <- function(rTDF,
   rTDF.long$maxopen<-with(rTDF.long,ave(open,ISOweek,FUN=max))
   # proportion of open days observed this far
   rTDF.long$propopen<-with(rTDF.long,open/maxopen)
+  # limited ISOweek for modeling
+  rTDF.long$USEweek<-with(rTDF.long,
+                          factor(ifelse(as.character(ISOweek)>=options()$euromomo$StartDelayEst,
+                                 as.character(ISOweek),NA)))
   # Poisson model for expected reported deaths
   # minimal formula
-  delay.formula<-"wr ~ ISOweek"
+  delay.formula<-"wr ~ USEweek"
   # role of delay. If none, none
   delaytype<-match.arg(delaytype)
   if(delaytype=="factor") delay.formula<-paste(delay.formula,"+delay")
@@ -117,10 +121,13 @@ delay.poisson <- function(rTDF,
   if(opentype=="offset") delay.formula<-paste(delay.formula,"+offset(log(",openvar,"))",sep="")
   if(opentype=="effect") delay.formula<-paste(delay.formula,"+log(",openvar,")",sep="")
   # Fit the model
+  # The subset is for making sure we use only the stable distribution
+  # FIXME: check if there observation triangles are included
   delay.model <- glm(formula(delay.formula),
+                     subset= !is.na(USEweek),
                      data = rTDF.long, family = quasipoisson(), na.action = na.exclude)
   # Predict expected number of reported deaths
-  rTDF.pred <- subset(rTDF.long, subset = delay == as.character(euromomoCntrl$back))
+  rTDF.pred <- subset(rTDF.long, subset = as.numeric(delay) == max(as.numeric(delay)))
   delay.pred<-predict(delay.model, newdata =rTDF.pred, type = "response",se=TRUE)
   # predicted number from the model
   rTDF.pred$ p.cnb <- with(delay.pred,fit)

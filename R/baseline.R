@@ -25,7 +25,7 @@
 #' @param group which group to use. Groups are defined using variables so this must be a name of an actual variable in the data
 #' @return EuroMOMO data with predicted values, prediction variances and overdispersion
 #' @export
-baseline <- function(data, seasonality =1, group=NULL,...){
+baseline <- function(data, seasonality =1, trend=1,group=NULL,...){
   # STEP 1: Calculate the trend (ISOweek) as continuous)
   data<-addweeks(data,group=group)
   # possible spline basis generation goes here
@@ -55,7 +55,10 @@ baseline <- function(data, seasonality =1, group=NULL,...){
   active_deaths<-sum(subset(data,cond==1)$cnb)
   if(active_deaths<10) warning("Number of deaths used for baseline estimation is very low")
 
-  glm_form <- "cnb ~wk"
+  if(trend==1)
+    glm_form <- "cnb ~ wk"
+  else
+    glm_form <- "cnb ~ 1"
   if(seasonality>0)
     glm_form<-paste(glm_form,"+",paste(as.vector(outer(c("sin","cos"),1:seasonality,paste,sep="")),collapse="+"))
 
