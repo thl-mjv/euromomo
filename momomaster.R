@@ -1,6 +1,9 @@
 ### Example of the workflow in the country
 # library("euromomo")
-parseDefaultsFile()
+# For testing source all function definitions
+(files<-list.files("R/",pattern="*.R",full=TRUE))
+for(i in files) source(i)
+#parseDefaultsFile()
 # Options for the aggregation
 euromomoCntrl <- list(
   #File with mortality data to read
@@ -24,6 +27,9 @@ holiday.file<-holiday()
 ### actually these names are deduced from the defaults
 groups<-c("Total")
 results.list<-list()
+
+momo<-readmomofile(euromomoCntrl)
+head(momo)
 
 for(i in groups) {
   #i<-"Total"
