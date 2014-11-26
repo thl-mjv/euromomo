@@ -3,7 +3,7 @@
 #' R function for delay corretion based on negative binomial distribution
 #' @param rTDF dataframe with aggregated number of reported deaths
 #' @param holiday file with holiday definitions
-#' @value a data frame with added column for delay corrected number of deaths and it's estimated variance
+#' @return a data frame with added column for delay corrected number of deaths and it's estimated variance
 #' @export
 delay.nb <- function(rTDF, holiday) {
   # options

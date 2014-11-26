@@ -2,7 +2,7 @@
 #'
 #' @param wd if "none", do not change the working directory, if "lower", change directory to weekly outputs directory, if "upper" change directory aboe that
 #' @param debugmode if TRUE use for debugging
-#' @value name of the working subdirectory
+#' @return name of the working subdirectory
 #' @export
 directories<-function(wd=c("none","upper","lower"),debugmode=FALSE) {
   opts<-getOption("euromomo")
