@@ -1,6 +1,6 @@
 ### PARAMETERS ####
-Country=Denmark
-Counties=Seeland,Jylland
+Country=SelectCoutrny
+Counties=SelectCounties
 Institution=ISS
 WorkDirectory=c:/.....
 InputFile=DoD_DoR.txt
