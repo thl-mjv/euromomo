@@ -138,9 +138,12 @@ checkOptions <- function() {
 
 doIt <- function() {
   source("defaults.R")
-  parseDefaultsFile("../defaults-example.txt")
+  #Assume getwd is equal to $WHATEVER/euromomo/
+  parseDefaultsFile("defaults-example.txt")
   checkOptions()
   #Extract stored list
   opts <- getOption("euromomo")
   opts
+  momoWithGroups <- makeGroups(momo)
+
 }
