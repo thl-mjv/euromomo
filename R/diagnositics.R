@@ -4,16 +4,14 @@ library("foreign")
 
 #' R function for delay corretion based on negative binomial distribution
 #' @param data is a dataframe with aggregated number of reported deaths, baseline, Zscores
-#' @param plot.options selects for output graph type, default is none
+#' @param plot.options selects for output graph type, default is matrix
 #' @value no value as yet
 #' @export
 
-diagostic.plots <- function(data, plot.options=("matrix","singles","none",...)) {
-# Temporal assignment of data
-  data <- diagsdata
+diagostic.plots <- function(data, plot.options=c("matrix", "singles", "none")) {
+# set matrix style output as default
+  plot.options <- match.arg(plot.options)
   # Add additional information (to be added: should be part of data already)
-    country <- "England"
-    group <- "Total"
     DateoA <- euromomoCntrl$dAggregation
     WoAi <- as.numeric(substr(ISOweek::date2ISOweek(DateoA), start = 7, stop = 8))
     YoAi <- as.numeric(substr(ISOweek::date2ISOweek(DateoA), start = 1, stop = 4))
@@ -44,69 +42,81 @@ diagostic.plots <- function(data, plot.options=("matrix","singles","none",...)) 
   #check subfolder exists ... to do
 
   if(plot.options=="singles"){
-    title <- paste(group, YoAi, WoAi, sep="-")
 
     #hist for corrected number of deaths
-    png(file=paste(current.folder, "/Hist-Deaths-",title,".png",sep=""))
-      plothist(data$cnb, title=paste("Deaths",title,sep="-"))
+    filename <- paste0("diagnostics/Hist-Deaths-",groupOpts["label"], ".png")
+    png(filename = file.path(week.dir, filename))
+      plothist(data$cnb, title=paste("Deaths",groupOpts["label"],sep="-"))
     dev.off()
 
     #hist for data used
-    png(file=paste(current.folder, "/Hist-UsedData-",title,".png",sep=""))
-      plothist(data$cnb[data$CondSeason == 1], title=paste("Used Data",title,sep="-"))
+    filename <- paste0("diagnostics/Hist-UsedData-",groupOpts["label"], ".png")
+    png(filename = file.path(week.dir, filename))
+      plothist(data$cnb[data$cond == 1], title=paste("Used Data",groupOpts["label"],sep="-"))
     dev.off()
 
+
     #hist for residuals for data used
-    png(file=paste(current.folder, "/Hist-Residuals-",title,".png",sep=""))
-      plothist((data$cnb - data$pnb)[data$CondSeason == 1],plotline=TRUE,
-             title=paste("Residuals",title,sep="-"))
+    filename <- paste0("diagnostics/Hist-Residuals-",groupOpts["label"], ".png")
+    png(filename = file.path(week.dir, filename))
+      plothist((data$cnb - data$pnb)[data$cond == 1],plotline=TRUE,
+             title=paste("Residuals",groupOpts["label"],sep="-"))
     dev.off()
 
     #hist for zscores
-    png(file=paste(current.folder, "/Hist-Zscores-",title,".png",sep=""))
-      plothist(data$Zscore, plotline=TRUE, title=paste("Zscores",title,sep="-"))
+    filename <- paste0("diagnostics/Hist-Zscores-",groupOpts["label"], ".png")
+    png(filename = file.path(week.dir, filename))
+      plothist(data$Zscore, plotline=TRUE, title=paste("Zscores",groupOpts["label"],sep="-"))
     dev.off()
 
     #corrected number of deaths v baseline points
-    png(file=paste(current.folder, "/Scatter-Deaths-",title,".png",sep=""))
-      plotscatter(data$pnb, data$cnb, title=paste("Deaths",title,sep="-"))
+    filename <- paste0("diagnostics/Scatter-Deaths-",groupOpts["label"], ".png")
+    png(filename = file.path(week.dir, filename))
+      plotscatter(data$pnb, data$cnb, title=paste("Deaths",groupOpts["label"],sep="-"))
     dev.off()
 
     #data used v baseline points
-    png(file=paste(current.folder, "/Scatter-UsedData-",title,".png",sep=""))
-      plotscatter(data$pnb[data$CondSeason == 1], data$cnb[data$CondSeason == 1],
-                title=paste("Used Data",title,sep="-"))
+    filename <- paste0("diagnostics/Scatter-UsedData-",groupOpts["label"], ".png")
+    png(filename = file.path(week.dir, filename))
+      plotscatter(data$pnb[data$cond == 1], data$cnb[data$cond == 1],
+                title=paste("Used Data",groupOpts["label"],sep="-"))
     dev.off()
 
     #residuals v baseline points
-    png(file=paste(current.folder, "/Scatter-Residuals-",title,".png",sep=""))
-      plotscatter(data$pnb[data$CondSeason == 1], (data$cnb - data$pnb)[data$CondSeason == 1],
-                title=paste("Residuals",title,sep="-"))
+    filename <- paste0("diagnostics/Scatter-Residuals-",groupOpts["label"], ".png")
+    png(filename = file.path(week.dir, filename))
+      plotscatter(data$pnb[data$cond == 1], (data$cnb - data$pnb)[data$cond == 1],
+                title=paste("Residuals",groupOpts["label"],sep="-"))
     dev.off()
     }
 
 
   if(plot.options=="matrix"){
-    title <- paste(group, YoAi, WoAi, sep="-")
-    png(file=paste(current.folder, "/Diagnostics-",title,".png",sep=""), width = 800)
+    # Open connection to png file
+    filename <- paste0("Diagnostics ", groupOpts["label"], ".png")
+    png(filename = file.path(week.dir, "Diagnostics", filename), width = 1000, height = 600, units = "px", pointsize = 12)
     par(mfrow = c(2,4))
     #hist for corrected number of deaths
-    plothist(data$cnb, title=paste("Deaths"))
+    plothist(data$cnb, title="Deaths")
     #hist for data used
-    plothist(data$cnb[data$CondSeason == 1], title=paste("Used Data"))
+    plothist(data$cnb[data$cond == 1], title="Used Data")
     #hist for residuals for data used
-    plothist((data$cnb - data$pnb)[data$CondSeason == 1],plotline=TRUE, title=paste("Residuals"))
+    plothist((data$cnb - data$pnb)[data$cond == 1],plotline=TRUE, title="Residuals")
     #hist for zscores
-    plothist(data$Zscore, plotline=TRUE, title=paste("Zscores"))
+    plothist(data$Zscore, plotline=TRUE, title="Zscores")
     #corrected number of deaths v baseline points
-    plotscatter(data$pnb, data$cnb, title=paste("Deaths"))
-    #data used v baseline points
-    plotscatter(data$pnb[data$CondSeason == 1], data$cnb[data$CondSeason == 1],
-                title=paste("Used Data"))
+    plotscatter(data$pnb, data$cnb, title="Deaths")
+    #data used v baseline poin
+    plotscatter(data$pnb[data$cond == 1], data$cnb[data$cond == 1],
+                title="Used Data")
     #residuals v baseline points
-    plotscatter(data$pnb[data$CondSeason == 1], (data$cnb - data$pnb)[data$CondSeason == 1],
-                title=paste("Residuals"))
+    plotscatter(data$pnb[data$cond == 1], (data$cnb - data$pnb)[data$cond == 1],
+                title="Residuals")
     dev.off()
+    par(mfrow=c(1,1))
   }
 
+
+
 }
+
