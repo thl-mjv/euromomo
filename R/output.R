@@ -4,29 +4,13 @@
 #
 
 output.graph <- function(data) {
-  # **This part should be deleted in the final version
-  # Temporal assignment of data, first run testing-base.R
-  data <- final
-  # Add additional information (to be added: should be part of data already)
-  data <- within(data, {
-    Version <- "v4-3"
-    Model <- "LINE"
-    source <- "HPA"
-    country <- "England"
-    group <- "Total"
-    DateoA <- euromomoCntrl$dAggregation
-    WoAi <- as.numeric(substr(ISOweek::date2ISOweek(DateoA), start = 7, stop = 8))
-    YoAi <- as.numeric(substr(ISOweek::date2ISOweek(DateoA), start = 1, stop = 4))
-  })
-  # **to here
-
   #
   # Graph: crude mortality
   #
 
   # Open connection to png file
-  filename <- paste0("Graph-Number_of_deaths-", data$group[1], ".png")
-  png(filename = file.path(week.dir, filename), width = 1920, height = 1080, units = "px", pointsize = 20)
+  filename <- paste0("Graph-Number_of_deaths-", groupOpts["label"], ".png")
+  png(filename = file.path(week.dir, "output", filename), width = 1920, height = 1080, units = "px", pointsize = 20)
 
   # Create layout: one for the graph, one for the legend
   layout(mat = matrix(c(1, 2), nrow = 2, ncol = 1), heights = c(4, 1))
@@ -39,11 +23,11 @@ output.graph <- function(data) {
     axis(side = 1, at = idx, labels = ISOweek[idx])
     axis(side = 2)
     box()
-    title(main = paste("Number of deaths -", ISOweek[nrow(data)], "\n", country[1], "- Group", group[1]))
+    title(main = paste("Number of deaths -", ISOweek[nrow(data)], "\n", getOption("euromomo")$Country, "- Group", groupOpts["label"]))
     # Add the graphs
     lines(x = 1:nrow(data), y = onb, col = "black")
-    lines(x = 1:nrow(data), y = ifelse(CondDelays == 0, cnb, NA), col = "green")
-    lines(x = 1:nrow(data), y = ifelse(CondSeason == 1, onb, NA), col = "blue")
+    lines(x = 1:nrow(data), y = ifelse(onb != cnb, cnb, NA), col = "green")
+    lines(x = 1:nrow(data), y = ifelse(cond == 1, onb, NA), col = "blue")
     lines(x = 1:nrow(data), y = pnb, col = "red")
     # Only plot prediction intervals that are smaller than max(onb)
     for (multiplier in seq(from = 2, to = 20, by = 2)) {
@@ -73,8 +57,8 @@ output.graph <- function(data) {
   #
 
   # Open connection to png file
-  filename <- paste0("Graph-Zscore-", data$group[1], ".png")
-  png(filename = file.path(week.dir, filename), width = 1920, height = 1080, units = "px", pointsize = 20)
+  filename <- paste0("Graph-Zscore-", groupOpts["label"], ".png")
+  png(filename = file.path(week.dir, "output", filename), width = 1920, height = 1080, units = "px", pointsize = 20)
 
   # Create layout: one for the graph, one for the legend
   layout(mat = matrix(c(1, 2), nrow = 2, ncol = 1), heights = c(4, 1))
@@ -89,10 +73,10 @@ output.graph <- function(data) {
     abline(h =  seq(from = -20, to = 20, by = 2), col = "yellow")
     abline(h = 0, col = "red")
     box()
-    title(main = paste("Z-score -", ISOweek[nrow(data)], "\n", country[1], "- Group", group[1]))
-        # Add the graphs
+    title(main = paste("Z-score -", ISOweek[nrow(data)], "\n", getOption("euromomo")$Country, "- Group", groupOpts["label"]))
+    # Add the graphs
     lines(x = 1:nrow(data), y = Zscore, col = "black")
-    lines(x = 1:nrow(data), y = ifelse(CondSeason == 1, Zscore, NA), col = "blue")
+    lines(x = 1:nrow(data), y = ifelse(cond == 1, Zscore, NA), col = "blue")
   })
   # Legend
   par(mar = rep(0, 4))
@@ -118,21 +102,6 @@ output.graph <- function(data) {
 #
 
 output.table <- function(data) {
-  # **This part should be deleted in the final version
-  # Temporal assignment of data, first run testing-base.R
-  data <- final
-  # Add additional information (to be added: should be part of data already)
-  data <- within(data, {
-    Version <- "v4-3"
-    Model <- "LINE"
-    source <- "HPA"
-    country <- "England"
-    group <- "Total"
-    DateoA <- euromomoCntrl$dAggregation
-    WoAi <- as.numeric(substr(ISOweek::date2ISOweek(DateoA), start = 7, stop = 8))
-    YoAi <- as.numeric(substr(ISOweek::date2ISOweek(DateoA), start = 1, stop = 4))
-  })
-  # **to here
 
   # Define variable that defines winter and summer season
   data <- within(data, season <- ifelse(WoDi >= 40 | WoDi <= 20, paste0("Winter-", YoDi-(WoDi <= 20)), paste0("Summer-", YoDi)))
@@ -154,6 +123,6 @@ output.table <- function(data) {
   cummort.data <- do.call(what = "rbind", args = tmp)
 
   # Save cummort.data in a text file
-  filename <- paste0("Cumulative_mortality_", data$group[1], ".txt")
-  capture.output(print(cummort.data), file = file.path(week.dir, filename))
+  filename <- paste0("Cumulative_mortality_", groupOpts["label"], ".txt")
+  capture.output(print(cummort.data), file = file.path(week.dir, "output", filename))
 }

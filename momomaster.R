@@ -83,6 +83,10 @@ for(i in groups) {
   data5 <- excess(data4,type="baseli")
   tail(data5)
 
+  # Generate output
+  output.graph(data5)
+  output.table(data5)
+
   # MISSING: format the output
   # Store the results
   results.list[[i]]<-data5

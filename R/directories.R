@@ -24,7 +24,7 @@ directories<-function(wd=c("none","upper","lower"),debugmode=FALSE) {
     setwd(week.dir)
   if(match.arg(wd)=="lower")
     setwd(root)
-  for(i in c("diagnostics","complete"))
+  for(i in c("diagnostics","complete", "output"))
     dir.create(file.path(week.dir,i))
   return(week.dir)
 }
