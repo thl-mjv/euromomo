@@ -1,8 +1,18 @@
-### READ DATA IN
-#' Read in the momo data
-#' @return a raw data file
+#' Function to read a file with individual case data from file.
+#' The file needs to be a CSV file with at least columns
+#' DoD (Day of Death) and DoR (Day of Registration) and age (Age of individual who died).
+#' All Dates need to be in ISO 8601 format, i.e. YYYY-MM-DD.
+#'
+#' @import ISOweek
+#' @return Returns a list containing the elements
+#' \tabular{ll}{
+#' momo \tab \code{data.frame} with all the relevant data. Note that only numberOfSeasons are kept. \cr
+#' dWeeks \tab Vector of mondays corresponding to the weeks spanning the data \cr
+#' dLastFull \tab Monday of the last full week in the data.
+#' }
 #' @export
 readmomofile <- function() {
+  #Extract the options.
   euromomoCntrl<-getOption("euromomo")
   #ISO format.
   dateFormat <- "%Y-%m-%d"
