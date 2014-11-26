@@ -66,7 +66,10 @@ for(i in groups) {
   tail(drTDF,20)
 
   # Add conditions for the baseline estimation
-  data2<-addconditions(drTDF,spring=getOption("euromomo")$spring,autumn=getOption("euromomo")$autumn,delay=back)
+  data2<-addconditions(drTDF,
+                       spring=getOption("euromomo")$spring,
+                       autumn=getOption("euromomo")$autumn,
+                       delay=back)
   summary(data2)
 
   # Estimate baseline

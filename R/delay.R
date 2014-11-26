@@ -63,7 +63,7 @@ delay.poisson <- function(rTDF,
   hTDF <- within(hTDF, closed <- ifelse(is.na(closed), 0, closed))
   # Convert closed days to open days and add standard working days
   hTDF <- within(hTDF, {
-    open <- getOption("euromomo")$nWorkdays - closed
+    open <- as.numeric(getOption("euromomo")$nWorkdays) - closed
     rm(closed)
   })
   # Add shifted vector with working days to hTDF for the number of delays

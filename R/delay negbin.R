@@ -26,7 +26,7 @@ delay.nb <- function(rTDF, holiday) {
   hTDF <- within(hTDF, {
     # only use the weeks larger than StartDelayEst
     open <- ifelse(as.character(ISOweek)>=opts$StartDelayEst,
-                   opts$nWorkdays - closed,
+                   as.numeric(opts$nWorkdays) - closed,
                    NA)
     rm(closed)
   })
