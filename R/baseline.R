@@ -21,28 +21,22 @@
 
 #' Calculate baseline
 #' @param data input data in EuroMOMO format
-#' @param seasonality number of seasonality components
-#' @param spline type of spline
-#' @param splinedf number of degrees of freedom in the spline basis
+#' @param seasonality number of seasonality components (0 or 1)
 #' @param group which group to use. Groups are defined using variables so this must be a name of an actual variable in the data
 #' @return EuroMOMO data with predicted values, prediction variances and overdispersion
 #' @export
-baseline <- function(data, seasonality =NULL, spline=c("none","cubic","linear"),
-                     splinedf=5,group=NULL,...){
+baseline <- function(data, seasonality =NULL, group=NULL,...){
   # STEP 1: Calculate the trend (ISOweek) as continuous)
   data<-addweeks(data,group=group)
   # possible spline basis generation goes here
-  spline<-match.arg(spline)
-  if(!splinedf%in%1:5) warning("Nonsense degrees of freedom to spline basis")
-  if(spline=="cubic") data$basis<-bs(data$wk,df=splinedf)
-  if(spline=="linear") data$basis<-bs(data$wk,df=splinedf,degree=1)
-
+  # splines removed
 
   # STEP 2: Calculate the sin-cos trends
   if(is.null(seasonality))
     seasonality<-as.numeric(getOption("euromomo")$all$baseline$seasonality)
   if(seasonality>0) {
-    seasonality<-pmax(1,seasonality)[1]
+    # Only one component allowed
+    seasonality<-1 # pmax(1,seasonality)[1]
     for(i in 1:seasonality) {
       data[[paste("sin",i,sep="")]] <- sin(i*2 * pi * data$wk/(52.18))
       data[[paste("cos",i,sep="")]] <- cos(i*2 * pi * data$wk/(52.18))
