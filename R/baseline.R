@@ -102,13 +102,12 @@ baseline <- function(data, seasonality =1, trend=1,group=NULL,...){
 #' @param data input data in EuroMOMO format
 #' @param spring: Week numbers for spring period, vector of integers between 1 and 53
 #' @param autumn: Week numbers for autumn period, vector of integers between 1 and 53
-#' @param duration: Duration of the baseline
 #' @param last: The last period that will be excluded
 #' @param delay: the number of delay week
 #' @param group which group to use. Groups are defined using variables so this must be a name of an actual variable in the data
 #' @return EuroMOMO data with extra variables with conditions used for modelling
 #' @export
-addconditions <- function(data, spring=15:26, autumn=36:45, duration=5*52, last=NULL, delay=0,group=NULL){
+addconditions <- function(data, spring=15:26, autumn=36:45, last=getOption("euromomo")$DayOfAggregation, delay=0, group=NULL){
 
   # Run addweeks function to create some week variables and trend
   data<-addweeks(data,group=group)
@@ -119,17 +118,13 @@ addconditions <- function(data, spring=15:26, autumn=36:45, duration=5*52, last=
   if(is.character(autumn)) autumn<-eval(parse(text=autumn))
   data$CondSeason <- ifelse(with(data, WoDi %in% c(spring, autumn)), 1, 0)
 
-  # Create Cond4: Removing past few months
-  if(is.null(last))
-    data$CondSomething <- rep(1,nrow(data))
+  # Create CondDropCurrentSeason: Removing weeks that are in the same season as the actual season
+  data$CondDropCurrentSeason <-
+    ifelse(ISOseasonStart(data$ISOweek) %in% ISOseasonStart(ISOweek(last)), 0, 1)
 
   # Create Cond5: Long delays
   delay<-pmax(0,delay)[1]
   data$CondDelays<-with(data,ifelse(wk<max(wk)-delay,1,0))
-
-  # Create Cond6: Length of the baseline (5 years)
-  duration<-pmax(155,duration)[1]
-  data$CondLength <- with(data,ifelse(wk > max(wk) - duration - delay, 1, 0))
 
   return(data)
 
