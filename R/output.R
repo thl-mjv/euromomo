@@ -26,8 +26,8 @@ output.graph <- function(data) {
     title(main = paste("Number of deaths -", ISOweek[nrow(data)], "\n", getOption("euromomo")$Country, "- Group", groupOpts["label"]))
     # Add the graphs
     lines(x = 1:nrow(data), y = onb, col = "black")
-    lines(x = 1:nrow(data), y = ifelse(CondDelays == 0, cnb, NA), col = "green")
-    lines(x = 1:nrow(data), y = ifelse(CondSeason == 1, onb, NA), col = "blue")
+    lines(x = 1:nrow(data), y = ifelse(onb != cnb, cnb, NA), col = "green")
+    lines(x = 1:nrow(data), y = ifelse(cond == 1, onb, NA), col = "blue")
     lines(x = 1:nrow(data), y = pnb, col = "red")
     # Only plot prediction intervals that are smaller than max(onb)
     for (multiplier in seq(from = 2, to = 20, by = 2)) {
@@ -74,9 +74,9 @@ output.graph <- function(data) {
     abline(h = 0, col = "red")
     box()
     title(main = paste("Z-score -", ISOweek[nrow(data)], "\n", getOption("euromomo")$Country, "- Group", groupOpts["label"]))
-        # Add the graphs
+    # Add the graphs
     lines(x = 1:nrow(data), y = Zscore, col = "black")
-    lines(x = 1:nrow(data), y = ifelse(CondSeason == 1, Zscore, NA), col = "blue")
+    lines(x = 1:nrow(data), y = ifelse(cond == 1, Zscore, NA), col = "blue")
   })
   # Legend
   par(mar = rep(0, 4))
