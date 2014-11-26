@@ -24,7 +24,7 @@ parseDefaultsFile <- function(fileName=NULL, debug=FALSE) {
   files <- c(defaultFile, fileName)
 
   if(length(files)==0) stop("No parameter configuration file found.")
-#   is.null(fileName)
+
   if(debug) cat("Using these files: ",paste(files,collapse=", "),"\n")
 
   #Read all files
