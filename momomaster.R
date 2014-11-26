@@ -28,8 +28,8 @@ holiday.file<-holiday()
 groups<-c("Total")
 results.list<-list()
 
-momo<-readmomofile(euromomoCntrl)
-head(momo)
+#momo<-readmomofile(euromomoCntrl)
+#head(momo)
 
 for(i in groups) {
   #i<-"Total"
