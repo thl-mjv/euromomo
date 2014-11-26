@@ -35,7 +35,8 @@ baseline <- function(data, seasonality =NULL, group=NULL,...){
   if(is.null(seasonality))
     seasonality<-as.numeric(getOption("euromomo")$all$baseline$seasonality)
   if(seasonality>0) {
-    # Only one component allowed
+    # Consider if we want have warning or change this silently
+    if(seasonality>1) warning("Only one length of seasonality allowed")
     seasonality<-1 # pmax(1,seasonality)[1]
     for(i in 1:seasonality) {
       data[[paste("sin",i,sep="")]] <- sin(i*2 * pi * data$wk/(52.18))
