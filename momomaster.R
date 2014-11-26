@@ -64,17 +64,17 @@ for(i in groups) {
   # Calculate Z-scores NOT NEEDED THESE ARE IN OUTPUT
   #data4 <- zscore(data3)
 
-  # Calculate excess NOT NEEDED THESE ARE IN OUTPUT
-  #data5 <- excess(data4,type="baseli")
+  # Calculate excess
+  data5 <- excess(data3,type="baseli")
   #tail(data5)
 
   # Generate output
-  output.graph(data3)
-  output.table(data3)
+  output.graph(data5)
+  output.table(data5)
 
   # MISSING: format the output
   # Store the results
-  results.list[[i]]<-data3
+  results.list[[i]]<-data5
 }
 
 final<-do.call("rbind",results.list)
