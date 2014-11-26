@@ -33,7 +33,7 @@ output <- function(data) {
     lines(x = 1:nrow(data), y = pnb, col = "red")
     # Add prediction intervals
     # Always plot -2 and +2, and only plot prediction intervals that are smaller than max(onb)
-    for (multiplier in seq(from = -2, to = 20, by = 2)) {
+    for (multiplier in c(-2, seq(from = 2, to = 20, by = 2))) {
       z <- (pnb^(2/3)+ multiplier*pv.pnb)^(3/2)
       if (is.element(multiplier, c(-2, 2)) | all(z < max(onb))) lines(x = 1:nrow(data), y = z, col = "orange")
     }
