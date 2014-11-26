@@ -175,7 +175,7 @@ addweeks <- function(data,group=NULL){
 #' Append zscores to the EuroMoMo data
 #'
 #' @param data a data frame in EuroMoMo format
-#' @value a data frame in EuroMoMo format
+#' @return a data frame in EuroMoMo format
 #' @export
 zscore <- function(data,type=c("baseline","both")) {
   type<-match.arg(type)
@@ -206,7 +206,7 @@ zscore <- function(data,type=c("baseline","both")) {
 #'
 #' @param data a data frame in EuroMoMo format
 #' @param multiplier how many approximate standard deviations to use?
-#' @value a data frame in EuroMoMo format
+#' @return a data frame in EuroMoMo format
 #' @export
 excess<-function(data,multiplier=2,type=c("baseline","basedelay","delay","both")){
   type<-match.arg(type)
