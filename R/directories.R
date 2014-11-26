@@ -18,13 +18,17 @@ directories<-function(wd=c("none","upper","lower"),debugmode=FALSE) {
   if(!fi[1,"isdir"]) stop("Working directory is not a directory")
   week.name<-paste("EUROMOMO",opts$Country,ISOweek(as.Date(opts$DayOfAggregation)),sep="-")
   week.dir<-file.path(root,week.name)
-  ok<-dir.create(week.dir)
+  if(!file.exists(week.dir))
+    ok<-dir.create(week.dir)
   if(inherits(ok,"try-error")) stop("Could not create working subdirectory")
   if(match.arg(wd)=="upper")
     setwd(week.dir)
   if(match.arg(wd)=="lower")
     setwd(root)
-  for(i in c("diagnostics","complete", "output"))
-    dir.create(file.path(week.dir,i))
+  for(i in c("diagnostics","complete", "output")) {
+    tmp<-file.path(week.dir,i)
+    if(!file.exists(tmp))
+      dir.create(tmp)
+  }
   return(week.dir)
 }

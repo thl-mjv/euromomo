@@ -85,7 +85,7 @@ baseline <- function(data, seasonality =1, trend=1,group=NULL,...){
     data$lv.pnb <- pred$se.fit^2
 
     # Attach overdispersion values to dataset
-    data$overdispersion <- summary(fit)$dispersion
+    data$od.cnb <- summary(fit)$dispersion
   }
 
   # Remove unnecessary tools
@@ -141,12 +141,14 @@ addconditions <- function(data, spring=15:26, autumn=36:45, duration=5*52, last=
 #' @param group which group to use. Groups are defined using variables so this must be a name of an actual variable in the data
 #' @return EuroMOMO data with extra variables with YearWeek and trend variable
 #' @export
-addweeks<-function(data,group=NULL){
+addweeks <- function(data,group=NULL){
   # Checks
-  if(!"ISOweek"%in%names(data)) stop("Invalid data")
-  if(!all(c("YoDi","WoDi")%in%names(data))) {
-    data$YoDi<-as.numeric(substring(as.character(data$ISOweek),1,4))
-    data$WoDi<-as.numeric(substring(as.character(data$ISOweek),7))
+  if(!"ISOweek" %in% names(data)) stop("Invalid data")
+  if(!all(c("YoDi","WoDi") %in% names(data))) {
+    #data$YoDi<-as.numeric(substring(as.character(data$ISOweek),1,4))
+    #data$WoDi<-as.numeric(substring(as.character(data$ISOweek),7))
+    data$YoDi<- ISOyear( as.character(data$ISOweek))
+    data$WoDi<- ISOwoy( as.character(data$ISOweek))
   }
 
   # Subset to right group
@@ -177,7 +179,7 @@ addweeks<-function(data,group=NULL){
 #' @export
 zscore <- function(data,type=c("baseline","both")) {
   type<-match.arg(type)
-  blvars<-c("pnb","overdispersion","lv.pnb")
+  blvars<-c("pnb","od.cnb","lv.pnb")
   # if we requested something needing baseline and it is not available, issue warnings and go away
   if(!all(blvars%in%names(data))&type%in%c("baseline","both")) {
     warning("No baseline found")
@@ -191,9 +193,9 @@ zscore <- function(data,type=c("baseline","both")) {
   }
 
   if(type=="baseline")
-    data$Zscore <-  with(data,(cnb^(2/3) - pnb^(2/3)) / ((4/9)*(pnb^(1/3))*(overdispersion+pnb*(lv.pnb)))^(1/2))
+    data$Zscore <-  with(data,(cnb^(2/3) - pnb^(2/3)) / ((4/9)*(pnb^(1/3))*(od.cnb+pnb*(lv.pnb)))^(1/2))
   if(type=="both")
-    data$Zscore <- with(data,(cnb^(2/3) - pnb^(2/3)) / ((4/9)*(pnb^(1/3))*(overdispersion+v.cnb/pnb+pnb*(lv.pnb)))^(1/2))
+    data$Zscore <- with(data,(cnb^(2/3) - pnb^(2/3)) / ((4/9)*(pnb^(1/3))*(od.cnb+v.cnb/pnb+pnb*(lv.pnb)))^(1/2))
 
   return(data)
 }
@@ -208,7 +210,7 @@ zscore <- function(data,type=c("baseline","both")) {
 #' @export
 excess<-function(data,multiplier=2,type=c("baseline","basedelay","delay","both")){
   type<-match.arg(type)
-  blvars<-c("pnb","overdispersion","lv.pnb")
+  blvars<-c("pnb","od.cnb","lv.pnb")
   # if we requested something needing baseline and it is not available, issue warnings and go away
   #if(!all(blvars%in%names(data))&type%in%c("baseline","both","basedelay")) {
    #warning("No baseline found")
@@ -222,9 +224,9 @@ excess<-function(data,multiplier=2,type=c("baseline","basedelay","delay","both")
   #}
   if(type%in%c("baseline","both","basedelay")) {
     if(type=="baseline")
-      data$pv.pnb<-with(data,((4/9)*(pnb^(1/3))*(overdispersion+(lv.pnb)*(pnb)))^(1/2))
+      data$pv.pnb<-with(data,((4/9)*(pnb^(1/3))*(od.cnb+(lv.pnb)*(pnb)))^(1/2))
     else
-      data$pv.pnb<-with(data,((4/9)*(pnb^(1/3))*(overdispersion+(v.cnb)/pnb+(lv.pnb)*(pnb)))^(1/2))
+      data$pv.pnb<-with(data,((4/9)*(pnb^(1/3))*(od.cnb+(v.cnb)/pnb+(lv.pnb)*(pnb)))^(1/2))
     data$u.pnb<-with(data,(pnb^(2/3)+ multiplier*pv.pnb)^(3/2))
     data$l.pnb<-with(data,pmax(0,pnb^(2/3)- multiplier*pv.pnb)^(3/2))
     data$excess<-with(data,cnb-pnb)
