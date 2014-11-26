@@ -9,7 +9,7 @@
 #'@param debug if true print extensive information
 #'@export
 
-parseDefaultsFile <- function(fileName, debug=FALSE) {
+parseDefaultsFile <- function(fileName=NULL, debug=FALSE) {
   #Here there would be the possibility to add extra files
   #containing, e.g. default parameter configrations
   #defaultFile <- NULL #list.files(patt="^defaults-.*[.]txt$")
@@ -24,6 +24,7 @@ parseDefaultsFile <- function(fileName, debug=FALSE) {
   files <- c(defaultFile, fileName)
 
   if(length(files)==0) stop("No parameter configuration file found.")
+
   if(debug) cat("Using these files: ",paste(files,collapse=", "),"\n")
 
   #Read all files
@@ -138,9 +139,12 @@ checkOptions <- function() {
 
 doIt <- function() {
   source("defaults.R")
-  parseDefaultsFile("../defaults-example.txt")
+  #Assume getwd is equal to $WHATEVER/euromomo/
+  parseDefaultsFile("defaults-example.txt")
   checkOptions()
   #Extract stored list
   opts <- getOption("euromomo")
   opts
+  momoWithGroups <- makeGroups(momo)
+
 }
