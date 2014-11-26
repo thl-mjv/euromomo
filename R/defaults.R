@@ -13,7 +13,16 @@ parseDefaultsFile <- function(fileName, debug=FALSE) {
   #Here there would be the possibility to add extra files
   #containing, e.g. default parameter configrations
   #defaultFile <- NULL #list.files(patt="^defaults-.*[.]txt$")
-  files <- fileName
+
+#   defaultFile <- system.file("extdata", "defaults.txt", package="euromomo")
+
+  #### Temporary default file - TO BE DELETED- ####
+    # Load library
+  defaultFile <- file.path(paste(getwd(), "/inst/extdata", sep=""), "defaults.txt")
+  #################################################
+
+  files <- c(defaultFile, fileName)
+
   if(length(files)==0) stop("No parameter configuration file found.")
   if(debug) cat("Using these files: ",paste(files,collapse=", "),"\n")
 
@@ -95,7 +104,7 @@ checkOptions <- function() {
   groups <- opts[["groups"]]
   for (i in 1:length(groups)) {
     #Check that the important attributes are there.
-    importantAttr <- c("definition","label")
+    importantAttr <- c("definition","label", "back")
     attrThere <- importantAttr %in% names(groups[[i]])
     if (!all(attrThere)) {
       stop(paste("Group \"",names(groups)[i],"\" is missing the attribute \"",importantAttr[!attrThere],"\"",sep=""))
@@ -129,9 +138,12 @@ checkOptions <- function() {
 
 doIt <- function() {
   source("defaults.R")
-  parseDefaultsFile("../defaults-example.txt")
+  #Assume getwd is equal to $WHATEVER/euromomo/
+  parseDefaultsFile("defaults-example.txt")
   checkOptions()
   #Extract stored list
   opts <- getOption("euromomo")
   opts
+  momoWithGroups <- makeGroups(momo)
+
 }
