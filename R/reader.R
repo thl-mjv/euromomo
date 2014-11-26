@@ -37,6 +37,7 @@ readmomofile <- function(euromomoCntrl) {
 
   #Monday of last full week before dAggregation (equal to dAggregation if its a monday)
   weekday <- ISOweek::ISOweekday(euromomoCntrl$dAggregation)
+  wAggregation<-as.numeric(substring(ISOweek::ISOweek(euromomoCntrl$dAggregation),7))
   dLastFullWeek <- euromomoCntrl$dAggregation - ifelse(weekday == 6, 6-1, (weekday - 1) + 7)
 
   #All observations arriving after dAggregation need to be removed.
@@ -50,13 +51,16 @@ readmomofile <- function(euromomoCntrl) {
   #than 5 years ago.
   #dStart <- seq(dLastFullWeek,length=2,by="-6 years")[-1]
   momo$YoDi<-as.numeric(substring(as.character(momo$YWoDi),7))
-  firstWeekInData <- min(momo$DoDMon) - (ISOweek::ISOweekday(min(momo$DoDMon)) - 1)
+  momo$WoDi<-as.numeric(substring(as.character(momo$YWoDi),1,4))
+  firstYearInData<-as.numeric(format(euromomoCntrl$dAggregation,"%Y"))+(wAggregation>=40)-euromomoCntrl$back
+  #firstWeekInData <- min(momo$DoDMon) - (ISOweek::ISOweekday(min(momo$DoDMon)) - 1)
+  firstWeekInData<-as.Date(paste(firstYearInData,"-01-01",sep=""))
   dStart <- firstWeekInData
   dStart <- dStart - (ISOweek::ISOweekday(dStart) - 1)
   #browser()
-  if (firstWeekInData > dStart) {
-    stop("Data don't go back as far as requested.")
-  }
+  #if (firstWeekInData > dStart) {
+  #  stop("Data don't go back as far as requested.")
+  #}
   #Subset data to be only observations with DoD
   dWeeks <- seq(dStart, dLastFullWeek, by="1 week")
   insideWeeks <- (momo$DoDMon >= dStart) & (momo$DoDMon <= dLastFullWeek)
