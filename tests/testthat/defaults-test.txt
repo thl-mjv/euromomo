@@ -7,6 +7,7 @@ InputFile=DoD_DoR.txt
 HolidayFile=Work.txt
 BaselineSeasons=5
 StartDelayEst=2008-W01
+DayOfAggregation=2013-01-03
 nworkdays=5
 
 ### GROUPS ###
@@ -34,7 +35,7 @@ group.momodefault5.back=6
 
 ### Baseline dependent on group ###
 group.momodefault1.seasonality=FALSE
-group.momodefault1.trend=TRUE
+group.momodefault1.trend=1
 group.momodefault2.seasonality=FALSE
 group.momodefault2.trend=TRUE
 group.momodefault3.seasonality=TRUE
