@@ -1,23 +1,23 @@
-loadDefaults(TRUE)
+#loadDefaults(TRUE)
 
-options()$euromomo
+#options()$euromomo
 
 data <- read.csv2("delay.txt")
-
-
-data2<-addconditions(crTDF4,spring=15:26,autumn=30:48,delay=1:2)
+tail(data)
+data$ISOweek<-with(data,sprintf("%04d-W%02d",YoDi,WoDi))
+data2<-addconditions(data,spring=15:26,autumn=30:48,delay=1:2)
 summary(data2)
 
-data3 <- baseline(data2,spline="n",splinedf=2)
+data3 <- baseline(data2)
+#                  ,seasonality=TRUE)
 
 head(data3)
 with(data3,as.data.frame(table(CondSeason,CondSomething,CondDelays,CondLength,cond)))
 
-with(data3,matplot(cbind(sin1,sin2),type="l"))
 
 data4 <- zscore(data3)
 
-data5 <- excess(data4,type="bo")
+data5 <- excess(data4,type="baseli")
 
 tail(data5)
 
