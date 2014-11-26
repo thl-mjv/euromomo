@@ -47,10 +47,20 @@ readmomofile <- function(euromomoCntrl) {
   #parameter file. For now: Go back 5 years and then to closest monday more
   #than 5 years ago.
   #dStart <- seq(dLastFullWeek,length=2,by="-6 years")[-1]
-  momo$YoDi<-as.numeric(substring(as.character(momo$YWoDi),7))
+#   momo$YoDi<-as.numeric(substring(as.character(momo$YWoDi),7))
+
+#   momo$YoDi <- ISOyear(momo$YWoDi)
+#   momo$WoDi <- ISOwoy(momo$YWoDi)
+
+
+  ISOSeason <- ISOseasonStart(ISOweek(dLastFullWeek))
+
+  dStart <- paste(ISOyear(ISOSeason) - as.numeric(euromomoCntrl$BaselineSeasons), "-W", ISOwoy(ISOSeason), "-1", sep="")
+  dStart <- ISOweek2date(dStart)
+
   firstWeekInData <- min(momo$DoDMon) - (ISOweek::ISOweekday(min(momo$DoDMon)) - 1)
-  dStart <- firstWeekInData
-  dStart <- dStart - (ISOweek::ISOweekday(dStart) - 1)
+#   dStart <- firstWeekInData
+#   dStart <- dStart - (ISOweek::ISOweekday(dStart) - 1)
   #browser()
   if (firstWeekInData > dStart) {
     stop("Data don't go back as far as requested.")

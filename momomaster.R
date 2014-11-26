@@ -1,8 +1,9 @@
 ### Example of the workflow in the country
 # library("euromomo")
 #Source in all R files as long as it's not a package
+cat("Sourcing in all R files:")
 sapply(list.files(path="R",pattern="*.R",full.names=TRUE), function(x) {
-  try(source(x))
+  tryCatch( {source(x) ; TRUE}, error=function(e) FALSE)
 })
 
 ### Now using the options
@@ -28,7 +29,7 @@ groups<-names(getOption("euromomo")[["groups"]])
 #groups<-c("momodefault1","momodefault2","momodefault3","momodefault4","momodefault5")
 results.list<-list()
 
-for(i in groups) {
+for (i in groups) {
   #i<-"Total"
   groupOpts <- getOption("euromomo")[["groups"]][[i]]
 
@@ -75,5 +76,5 @@ for(i in groups) {
   results.list[[i]]<-data5
 }
 
-final<-do.call("rbind",results.list)
+final <- do.call("rbind",results.list)
 summary(final)
