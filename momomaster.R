@@ -2,9 +2,11 @@
 # library("euromomo")
 #Source in all R files as long as it's not a package
 cat("Sourcing in all R files:")
-sapply(list.files(path="R",pattern="*.R",full.names=TRUE), function(x) {
+RFiles <- list.files(path="R",pattern="*.R",full.names=TRUE)
+isWorking <- sapply(RFiles, function(x) {
   tryCatch( {source(x) ; TRUE}, error=function(e) FALSE)
 })
+cat("The following R files are not compiling: ",RFiles[which(!isWorking)],"\n")
 
 ### Now using the options
 parseDefaultsFile("defaults-example.txt")
