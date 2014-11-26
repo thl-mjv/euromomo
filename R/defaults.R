@@ -72,6 +72,7 @@ parseDefaultsFile <- function(fileName, debug=FALSE) {
 #' At the first error the function stops.
 #'
 #' @return TRUE, if functions passes finds no errors.
+#' @export
 checkOptions <- function() {
   #Extract from global options
   opts <- getOption("euromomo")
