@@ -13,8 +13,10 @@ Author: Mikko J Virtanen [aut, cre, ctb], ..., Michael Höhle [ctb], ...
 Maintainer: Mikko J Virtanen <mikko.virtanen@thl.fi>
 Depends:
     ISOweek
-Descriptions: something something
+Description: Code for running the R version of the EuroMoMo algorithm (A-MOMO
+    4.3)
 License: GPL 2.0
 LazyData: yes
 Suggests:
-    foreign
+    foreign,
+    testthat

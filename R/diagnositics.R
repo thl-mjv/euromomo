@@ -3,7 +3,7 @@
 #' R function for delay corretion based on negative binomial distribution
 #' @param data is a dataframe with aggregated number of reported deaths, baseline, Zscores
 #' @param plot.options selects for output graph type, default is matrix
-#' @value no value as yet
+#' @return no value as yet
 #' @export
 
 diagostic.plots <- function(data, plot.options=c("matrix", "singles", "none")) {
