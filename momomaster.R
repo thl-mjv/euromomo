@@ -17,12 +17,45 @@ euromomoCntrl <- list(
   nWorkdays=5
 )
 
-loadDefaults()
-group<-c("Total")
+### Something goes here to see that
 
-rTList <- file2ReportingTriangle(euromomoCntrl)
-rTList$rT
-rTList$cumRT
-rTDF <- rT2DataFrame(rTList$cumRT)
-colnames(rTDF)
-rownames(rTDF)
+### read holidays HERE
+holiday.file<-holiday()
+### actually these names are deduced from the defaults
+groups<-c("Total")
+results.list<-list()
+
+for(i in groups) {
+  #i<-"Total"
+  rTList <- file2ReportingTriangle(euromomoCntrl) # something about the group
+  rTDF <- rT2DataFrame(rTList$cumRT)
+  head(rTDF)
+  ### OR read holidays HERE
+  #holiday.file<-holiday()
+
+  # Delay adjustment
+  drTDF<-delay(rTDF,method="negbin",holiday=holiday.file)
+  tail(drTDF,20)
+
+  # Add conditions for the baseline estimation
+  data2<-addconditions(drTDF,spring=15:26,autumn=30:48,delay=6)
+  summary(data2)
+
+  # Estimate baseline
+  data3 <- baseline(data2)
+  tail(data3)
+
+  # Calculate Z-scores
+  data4 <- zscore(data3)
+
+  # Calculate excess
+  data5 <- excess(data4,type="baseli")
+  tail(data5)
+
+  # MISSING: format the output
+  # Store the results
+  results.list[[i]]<-data5
+}
+
+final<-do.call("rbind",results.list)
+summary(final)
