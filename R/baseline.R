@@ -148,7 +148,7 @@ addweeks <- function(data,group=NULL){
     #data$YoDi<-as.numeric(substring(as.character(data$ISOweek),1,4))
     #data$WoDi<-as.numeric(substring(as.character(data$ISOweek),7))
     data$YoDi<- ISOyear( as.character(data$ISOweek))
-    data$WoDi<- ISOweek( as.character(data$ISOweek))
+    data$WoDi<- ISOwoy( as.character(data$ISOweek))
   }
 
   # Subset to right group
