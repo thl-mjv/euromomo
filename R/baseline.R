@@ -25,17 +25,24 @@
 #' @param group which group to use. Groups are defined using variables so this must be a name of an actual variable in the data
 #' @return EuroMOMO data with predicted values, prediction variances and overdispersion
 #' @export
-baseline <- function(data, seasonality =1, group=NULL,...){
+baseline <- function(data, seasonality =1, trend=1,group=NULL,...){
   # STEP 1: Calculate the trend (ISOweek) as continuous)
+  if(is.null(trend))
+    trend<-as.numeric(getOption("euromomo")$trend)
+  if(is.null(trend)) trend<-0
+  if(is.character(trend)) trend<-as.numeric(eval(parse(text=trend)))
+
   data<-addweeks(data,group=group)
   # possible spline basis generation goes here
   # splines removed
 
   # STEP 2: Calculate the sin-cos trends
   if(is.null(seasonality))
-    seasonality<-as.numeric(getOption("euromomo")$all$baseline$seasonality)
+    seasonality<-as.numeric(getOption("euromomo")$seasonality)
   if(is.null(seasonality)) seasonality<-0
-  print(seasonality)
+  if(is.character(seasonality)) seasonality<-as.numeric(eval(parse(text=seasonality)))
+
+
   if(seasonality>0) {
     # Consider if we want have warning or change this silently
     if(seasonality>1) warning("Only one length of seasonality allowed")
@@ -55,7 +62,10 @@ baseline <- function(data, seasonality =1, group=NULL,...){
   active_deaths<-sum(subset(data,cond==1)$cnb)
   if(active_deaths<10) warning("Number of deaths used for baseline estimation is very low")
 
-  glm_form <- "cnb ~wk"
+  if(trend==1)
+    glm_form <- "cnb ~ wk"
+  else
+    glm_form <- "cnb ~ 1"
   if(seasonality>0)
     glm_form<-paste(glm_form,"+",paste(as.vector(outer(c("sin","cos"),1:seasonality,paste,sep="")),collapse="+"))
 
@@ -64,19 +74,25 @@ baseline <- function(data, seasonality =1, group=NULL,...){
 
   if(!inherits(fit,"try-error")) {
 
-  # STEP 4: Prediction of the model
-  pred <- predict(fit, newdata = data, type = "link", se=TRUE)
+    # STEP 4: Prediction of the model
+    pred <- predict(fit, newdata = data, type = "link", se=TRUE)
 
-  # Attach fitted values to dataset
-  invlink<-family(fit)$linkinv
-  data$pnb <- invlink(pred$fit)
+    # Attach fitted values to dataset
+    invlink<-family(fit)$linkinv
+    data$pnb <- invlink(pred$fit)
 
-  # Attach predistion variance to dataset
-  data$lv.pnb <- pred$se.fit^2
+    # Attach prediction variance to dataset
+    data$lv.pnb <- pred$se.fit^2
 
-  # Attach overdispersion values to dataset
-  data$overdispersion <- summary(fit)$dispersion
+    # Attach overdispersion values to dataset
+    data$overdispersion <- summary(fit)$dispersion
   }
+
+  # Remove unnecessary tools
+  for(i in c(grep("^sin",names(data),value=TRUE),
+             grep("^cos",names(data),value=TRUE),
+             grep("^Cond",names(data),value=TRUE),
+             "wk","YoDi","WoDi")) data[[i]]<-NULL
 
   return(data)
 }
@@ -98,6 +114,8 @@ addconditions <- function(data, spring=15:26, autumn=36:45, duration=5*52, last=
 
   # Create Cond3: Period for spring and autumn
   # spring and autumn must be vectors of integers between 1 and 53
+  if(is.character(spring)) spring<-eval(parse(text=spring))
+  if(is.character(autumn)) autumn<-eval(parse(text=autumn))
   data$CondSeason <- ifelse(with(data, WoDi %in% c(spring, autumn)), 1, 0)
 
   # Create Cond4: Removing past few months

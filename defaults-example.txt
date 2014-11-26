@@ -2,12 +2,13 @@
 Country=Denmark
 Counties=Seeland,Jylland
 Institution=ISS
-Workdirectory=c:/.....
-InputFile=DoD_DoR.txt
-HolidayFile=Work.txt
+WorkDirectory=.
+InputFile=data/DoD_DoR.txt
+HolidayFile=data/holidays.txt
 BaselineSeasons=5
 StartDelayEst=2008-W01
-nworkdays=5
+DayOfAggregation=2013-01-03
+nWorkdays=5
 
 ### GROUPS ###
 group.momodefault1.definition=(age<5)
@@ -51,5 +52,5 @@ autumn=33:46
 
 #Specific weeks to be included due, e.g, outbreaks, heat spells
 except=2007-W01:2007-W02
-except=2007-W23:2007-W03
+except=2007-W23:2008-W03
 
