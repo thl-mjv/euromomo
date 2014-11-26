@@ -3,8 +3,8 @@
 \alias{addconditions}
 \title{Create condition variables and add them to the dataset}
 \usage{
-addconditions(data, spring = 15:26, autumn = 36:45, duration = 5 * 52,
-  last = NULL, delay = 0, group = NULL)
+addconditions(data, spring = 15:26, autumn = 36:45,
+  last = getOption("euromomo")$DayOfAggregation, delay = 0, group = NULL)
 }
 \arguments{
 \item{data}{input data in EuroMOMO format}
@@ -14,8 +14,6 @@ addconditions(data, spring = 15:26, autumn = 36:45, duration = 5 * 52,
 \item{spring:}{Week numbers for spring period, vector of integers between 1 and 53}
 
 \item{autumn:}{Week numbers for autumn period, vector of integers between 1 and 53}
-
-\item{duration:}{Duration of the baseline}
 
 \item{last:}{The last period that will be excluded}
 
