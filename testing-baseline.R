@@ -22,8 +22,8 @@ data5 <- excess(data4,type="baseli")
 tail(data5)
 
 library("lattice")
-
-xyplot(nb+cnb+pnb+u.pnb+l.pnb+u.cnb+l.cnb~wk,data=data5,subset=wk>300,
+names(data5)
+xyplot(nb+cnb+pnb+u.pnb+l.pnb~wk,data=data5,subset=wk>30,
        type="l",ylim=c(0,2000),lty=c(1,1,1,2,2,2,2),lwd=c(2,2,1,1,1,1,1),
        col=c(1,2,3,3,3,2,2))
 xyplot(Zscore~wk,data=data5,type="l")

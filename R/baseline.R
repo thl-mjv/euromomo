@@ -88,6 +88,12 @@ baseline <- function(data, seasonality =1, trend=1,group=NULL,...){
     data$overdispersion <- summary(fit)$dispersion
   }
 
+  # Remove unnecessary tools
+  for(i in c(grep("^sin",names(data),value=TRUE),
+             grep("^cos",names(data),value=TRUE),
+             grep("^Cond",names(data),value=TRUE),
+             "wk","YoDi","WoDi")) data[[i]]<-NULL
+
   return(data)
 }
 
@@ -109,7 +115,7 @@ addconditions <- function(data, spring=15:26, autumn=36:45, duration=5*52, last=
   # Create Cond3: Period for spring and autumn
   # spring and autumn must be vectors of integers between 1 and 53
   if(is.character(spring)) spring<-eval(parse(text=spring))
-  if(is.character(autumn)) spring<-eval(parse(text=autumn))
+  if(is.character(autumn)) autumn<-eval(parse(text=autumn))
   data$CondSeason <- ifelse(with(data, WoDi %in% c(spring, autumn)), 1, 0)
 
   # Create Cond4: Removing past few months
