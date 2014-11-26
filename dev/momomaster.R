@@ -1,57 +1,53 @@
+### Start by copying the defaults-example.txt and edit it to suit your needs
+if(!file.exists("momomaster.R"))
+  if(file.exists("dev"))
+    setwd("dev")
+getwd()
+list.files()
 ### Example of the workflow in the country
 library("euromomo")
-#Source in all R files as long as it's not a package
-#cat("Sourcing in all R files:")
-#RFiles <- list.files(path="R",pattern="*.R",full.names=TRUE)
-#isWorking <- sapply(RFiles, function(x) {
-#  tryCatch( {source(x) ; TRUE}, error=function(e) FALSE)
-#})
-#cat("The following R files are not compiling: ",RFiles[which(!isWorking)],"\n")
+
 
 ### Now using the options
-parseDefaultsFile("defaults-example.txt")
+parseDefaultsFile("defaults-fi.txt")
 checkOptions()
 
 # Create the working directory
 week.dir<-directories(debugmode=TRUE)
-# (using debugmode creates the working directory to a temporary location)
-
-# no longer needed: euromomoCntrl <- getOption("euromomo")
 
 # Read in the raw data
-momoFile <- readmomofile() # changed the semantics a bit: getOption("euromomo"))
+momoFile <- readmomofile()
 
 #Create the groups (as stored in the option file)
 momo <- makeGroups(momoFile$momo)
 
 ### read holidays HERE
 holiday.file<-holiday(holiday.filename=getOption("euromomo")$HolidayFile)
-### actually these names are deduced from the defaults
+
+### The groups are determined from the options
 groups<-names(getOption("euromomo")[["groups"]])
-#groups<-c("momodefault1","momodefault2","momodefault3","momodefault4","momodefault5")
+
+### This is where the results go
 results.list<-list()
 
 for (i in groups) {
   #i<-"Total"
   groupOpts <- getOption("euromomo")[["groups"]][[i]]
-
-  #rTList <- file2ReportingTriangle(getOption("euromomo")) # something about the group
-  #Define nre function df2Reportiangle
+  cat("Group",groupOpts["label"],"\n")
 
   groupIndicator <- momo[, paste("group_",i,sep="")]
   back<-as.numeric(groupOpts["back"])
 
-
   rTList <- df2ReportingTriangle(momo, groupIndicator, back, dWeeks=momoFile$dWeeks, dLastFullWeek=momoFile$dLastFullWeek) # something about the group
 
   rTDF <- rT2DataFrame(rTList$cumRT)
-  head(rTDF)
-  ### OR read holidays HERE
-  #holiday.file<-holiday()
+  cat("Group",groupOpts["label"]," reporting triangle\n")
+  print(head(rTDF))
 
   # Delay adjustment
   drTDF<-delay(rTDF,method="negbin",holiday=holiday.file)
-  tail(drTDF,20)
+  cat("Group",groupOpts["label"]," with delay correction\n")
+  print(tail(drTDF,20))
 
   # Add conditions for the baseline estimation
   data2<-addconditions(drTDF,
@@ -59,24 +55,25 @@ for (i in groups) {
                        autumn=getOption("euromomo")$autumn,
                        delay=back,
                        last=getOption("euromomo")$DayOfAggregation)
-  summary(data2)
+  #summary(data2)
 
-  # Estimate baseline
+  # Estimate the baseline
   data3 <- baseline(data2)
-  tail(data3)
+  cat("Group",groupOpts["label"]," with baseline\n")
+  print(tail(data3))
 
   # Calculate Z-scores
   data4 <- zscore(data3)
 
   # Calculate excess
-  data5 <- excess(data4,type="baseli")
+  data5 <- excess(data4,type="both")
   #tail(data5)
 
   # Generate output
-  output(data5)
+  try(output(data5))
 
   # Create diagnostic plots
-  diagnostic.plots(data5)
+  try(diagnostic.plots(data5))
 
   # Store the results
   results.list[[i]]<-data5
