@@ -57,7 +57,8 @@ for (i in groups) {
   data2<-addconditions(drTDF,
                        spring=getOption("euromomo")$spring,
                        autumn=getOption("euromomo")$autumn,
-                       delay=back)
+                       delay=back,
+                       last=getOption("euromomo")$DayOfAggregation)
   summary(data2)
 
   # Estimate baseline
@@ -80,6 +81,7 @@ for (i in groups) {
   # Store the results
   results.list[[i]]<-data5
 }
-
+# on most system, you can check the outputs using
+# system(paste("open",week.dir))
 final <- do.call("rbind",results.list)
 summary(final)
