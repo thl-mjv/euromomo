@@ -15,5 +15,5 @@ Depends: ISOweek
 Descriptions: something something
 License: GPL 2.0
 LazyData: yes
-Suggests:
+Suggests: foreign
     

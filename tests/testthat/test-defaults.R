@@ -19,7 +19,7 @@ test_that("dStart > dEnd",
 
 #Modify
 opts <- getOption("euromomo")
-opts[["except"]][2,2] <- "2008-W03"
+opts[["exception"]][2,2] <- "2008-W03"
 options(euromomo=opts)
 #checkOptions()
 
@@ -36,13 +36,3 @@ checkOptions()
 test_that("trend is logical after fixing problem",
           expect_equal(checkOptions(), TRUE))
           
-#Generate the groups
-makeGroups()
-#need to define momo data.frame
-
-test_that("Age group 1 is correctly definied",
-          expect_true( all((momo$age < 5) == momoWithGroups[,"group_1"]) ))
-
-test_that("Age group 2 is correctly definied",
-          expect_true( all((momo$age >= 5 & momo$age < 15) == momoWithGroups[,"group_2"]) ))
-

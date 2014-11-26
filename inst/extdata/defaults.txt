@@ -11,42 +11,40 @@ nWorkdays=5
 
 
 ### GROUPS ###
-group.1.definition=(age<5)
-group.1.label=0-4
-group.2.definition=((5<=age) & (age<15))
-group.2.label=5-14
-group.3.definition=((15<=age) & (age<65))
-group.3.label=15-64
-group.4.definition=(65<=age)
-group.4.label=65+
-group.5.definition=(0<=age)
-group.5.label=Total
-group.6.definition=(20<=age) & (age<45) & (gender=='male')
-group.6.label=A very special group
+group.momodefault1.definition=(age<5)
+group.momodefault1.label=0-4
+group.momodefault2.definition=((5<=age) & (age<15))
+group.momodefault2.label=5-14
+group.momodefault3.definition=((15<=age) & (age<65))
+group.momodefault3.label=15-64
+group.momodefault4.definition=(65<=age)
+group.momodefault4.label=65+
+group.momodefault5.definition=(0<=age)
+group.momodefault5.label=Total
+
 
 
 ### Back weeks for delay-adjustment dependent on group ###
-group.1.back=6
-group.2.back=6
-group.3.back=6
-group.4.back=6
-group.5.back=6
-group.6.back=6
+group.momodefault1.back=6
+group.momodefault2.back=6
+group.momodefault3.back=6
+group.momodefault4.back=6
+group.momodefault5.back=6
+
 
 
 ### Baseline dependent on group ###
-group.1.seasonality=FALSE
-group.1.trend=TRUE
-group.2.seasonality=FALSE
-group.2.trend=TRUE
-group.3.seasonality=TRUE
-group.3.trend=FALSE
-group.4.seasonality=TRUE
-group.4.trend=TRUE
-group.5.seasonality=TRUE
-group.5.trend=TRUE
-group.6.seasonality=TRUE
-group.6.trend=FALSE
+group.momodefault1.seasonality=FALSE
+group.momodefault1.trend=TRUE
+group.momodefault2.seasonality=FALSE
+group.momodefault2.trend=TRUE
+group.momodefault3.seasonality=TRUE
+group.momodefault3.trend=FALSE
+group.momodefault4.seasonality=TRUE
+group.momodefault4.trend=TRUE
+group.momodefault5.seasonality=TRUE
+group.momodefault5.trend=TRUE
+
 
 
 ### ISO weels of general exception periods ###
@@ -54,6 +52,5 @@ spring=15:26
 autumn=35:46
 
 #Specific weeks to be included due, e.g, outbreaks, heat spells
-except=2007-W01:2007-W02
-except=2007-W23:2008-W03
+
 

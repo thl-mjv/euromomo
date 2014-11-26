@@ -52,8 +52,8 @@ delay.poisson <- function(rTDF,
                        opentype=c("offset","effect","none"),
                        openvar=c("open","propopen"),
                        delaytype=c("factor","numeric","none"),holiday) {
-
-       # temporal assingment of objects
+  # options
+  back<-max(as.numeric(gsub("w","",grep("^w[0-9]*",names(rTDF),value=TRUE))))
   # Make the holiday triangle
   # First get the isoweeks form rTDF
   hTDF <- data.frame(ISOweek = rTDF$ISOweek)
@@ -63,14 +63,14 @@ delay.poisson <- function(rTDF,
   hTDF <- within(hTDF, closed <- ifelse(is.na(closed), 0, closed))
   # Convert closed days to open days and add standard working days
   hTDF <- within(hTDF, {
-    open <- euromomoCntrl$nWorkdays - closed
+    open <- getOption("euromomo")$nWorkdays - closed
     rm(closed)
   })
   # Add shifted vector with working days to hTDF for the number of delays
-  for (i in 1:euromomoCntrl$back) {
+  for (i in 1:back) {
     hTDF <- cbind(hTDF, c(rep(NA, i), hTDF$open[1:(nrow(hTDF)-i)]))
   }
-  colnames(hTDF) <- c("ISOweek", paste0("open", formatC(0:euromomoCntrl$back, width = 2, flag = "0")))
+  colnames(hTDF) <- c("ISOweek", paste0("open", formatC(0:back, width = 2, flag = "0")))
   # Calculate cumulative open days
   cumHT <- cbind(ISOweek = hTDF$ISOweek, as.data.frame(t(apply(hTDF[, -1], MARGIN = 1, FUN = cumsum))))
 
@@ -80,7 +80,7 @@ delay.poisson <- function(rTDF,
     varying = names(rTDF)[-1],
     v.names = "wr",
     timevar = "delay",
-    times = factor(0:euromomoCntrl$back),
+    times = factor(0:back),
     idvar = "ISOweek",
     direction = "long")
 
@@ -90,7 +90,7 @@ delay.poisson <- function(rTDF,
     varying = names(cumHT)[-1],
     v.names = "open",
     timevar = "delay",
-    times = factor(0:euromomoCntrl$back),
+    times = factor(0:back),
     idvar = "ISOweek",
     direction = "long")
 
@@ -104,9 +104,13 @@ delay.poisson <- function(rTDF,
   rTDF.long$maxopen<-with(rTDF.long,ave(open,ISOweek,FUN=max))
   # proportion of open days observed this far
   rTDF.long$propopen<-with(rTDF.long,open/maxopen)
+  # limited ISOweek for modeling
+  rTDF.long$USEweek<-with(rTDF.long,
+                          factor(ifelse(as.character(ISOweek)>=getOption("euromomo")$StartDelayEst,
+                                 as.character(ISOweek),NA)))
   # Poisson model for expected reported deaths
   # minimal formula
-  delay.formula<-"wr ~ ISOweek"
+  delay.formula<-"wr ~ USEweek"
   # role of delay. If none, none
   delaytype<-match.arg(delaytype)
   if(delaytype=="factor") delay.formula<-paste(delay.formula,"+delay")
@@ -117,10 +121,13 @@ delay.poisson <- function(rTDF,
   if(opentype=="offset") delay.formula<-paste(delay.formula,"+offset(log(",openvar,"))",sep="")
   if(opentype=="effect") delay.formula<-paste(delay.formula,"+log(",openvar,")",sep="")
   # Fit the model
+  # The subset is for making sure we use only the stable distribution
+  # FIXME: check if there observation triangles are included
   delay.model <- glm(formula(delay.formula),
+                     subset= !is.na(USEweek),
                      data = rTDF.long, family = quasipoisson(), na.action = na.exclude)
   # Predict expected number of reported deaths
-  rTDF.pred <- subset(rTDF.long, subset = delay == as.character(euromomoCntrl$back))
+  rTDF.pred <- subset(rTDF.long, subset = as.numeric(delay) == max(as.numeric(delay)))
   delay.pred<-predict(delay.model, newdata =rTDF.pred, type = "response",se=TRUE)
   # predicted number from the model
   rTDF.pred$ p.cnb <- with(delay.pred,fit)
