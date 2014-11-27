@@ -1,5 +1,6 @@
 #' Function to read a file with individual case data from file.
-#' The file needs to be a CSV file with at least columns
+#'
+#' The file needs to be a CSV file with at least columns the columns:
 #' DoD (Day of Death) and DoR (Day of Registration) and age (Age of individual who died).
 #' All Dates need to be in ISO 8601 format, i.e. YYYY-MM-DD.
 #'
