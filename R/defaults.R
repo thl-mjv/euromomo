@@ -1,13 +1,21 @@
-#' Function to parse a specification file for setting the
-#' R-EuroMOMO algorithm parameters. The parser is handwritten based
-#' on regular expressions. This is error prone. Future versions could
-#' be, e.g., XML based, but this works for now. Based on the philosophy
-#' of a SINGLE parameter file, we removed any previous default configurations,
-#' but this would be easy to add again (e.g. one defining the 4 STANDARD age groups.)
+#' Function to parse a EuroMOMO specification file.
 #'
-#'@param fileName of the parameter configuration file
-#'@param debug if true print extensive information
-#'@export
+#' The function sets R-EuroMOMO algorithm parameters based on a cascading series of TXT file consisting
+#' of <Lefthandside> = <Righthandside> operators.
+#'
+#' Operation: Each <LHS> = <RHS> is stored in a list. There are two special
+#' LHS's: except and group, which are used to specify exception periods and group
+#' information. First a global defaults.txt file is ran and then possibly local
+#' defaults are run. Parameters which need to be here: see ImportantVarNames in checkOptions.\cr\cr
+#' Syntax for specifying groups: \code{<group>.<groupName>.<attributeName> = <attributeValue}. \cr
+#' Syntax for specifying except periods: \code{except = <Start ISO-week>:<End ISO-week>}. \cr \cr
+#' There are five pre-defined age groups: momodefault<1-5>.
+#'
+#' @note The parser is handwritten based on regular expressions, which is prone to error.
+#' Future versions could be, e.g., XML based.
+#' @param fileName of the parameter configuration file
+#' @param debug if true print extensive information
+#' @export
 
 parseDefaultsFile <- function(fileName, debug=FALSE) {
   #Read in file with default parameter configrations
@@ -76,14 +84,20 @@ parseDefaultsFile <- function(fileName, debug=FALSE) {
   invisible(out)
 }
 
-#' Function to check, if the currently list stored in options("euromomo")
-#' is semantically valid. At the moment, this check consists of:
-#' 1. Check for all entries in 'except' that dStart <= dEnd
-#' 2. Each group has a 'definition' and a 'label' attribute.
-#' 3. That all Boolean Attributes (e.g. 'trend' and 'seasonality') are really Booleans.
-#' At the first error the function stops.
+#' Checking of the euromomo options.
 #'
-#' @return TRUE, if functions passes finds no errors.
+#' Function to check, if the currently list stored in options("euromomo")
+#' is semantically valid.
+#'
+#' At the moment, this check consists of:
+#' \enumerate{
+#' \item Check for all entries in 'except' that dStart <= dEnd
+#' \item Each group has a 'definition' and a 'label' attribute.
+#' \item That all Boolean Attributes (e.g. 'trend' and 'seasonality') are really Booleans.
+#' At the first error the function stops.
+#' }
+#' @note Only one error at the time is found.
+#' @return TRUE, if function finds no errors. Otherwise a "stop" halts function execution.
 #' @export
 checkOptions <- function() {
   #Extract from global options
