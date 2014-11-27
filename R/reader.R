@@ -4,6 +4,7 @@
 #' DoD (Day of Death) and DoR (Day of Registration) and age (Age of individual who died).
 #' All Dates need to be in ISO 8601 format, i.e. YYYY-MM-DD.
 #'
+#' @param dateFormat Format string specifying how the dates are formatted. Default: \code{"\%Y-\%m-\%d"}.
 #' @import ISOweek
 #' @return Returns a list containing the elements
 #' \tabular{ll}{
@@ -12,11 +13,9 @@
 #' dLastFull \tab Monday of the last full week in the data.
 #' }
 #' @export
-readmomofile <- function() {
+readmomofile <- function(dateFormat="%Y-%m-%d") {
   #Extract the options.
   euromomoCntrl<-getOption("euromomo")
-  #ISO format.
-  dateFormat <- "%Y-%m-%d"
 
   #Read data from file
   momo <- read.csv(euromomoCntrl$InputFile,sep=";",stringsAsFactors=FALSE)
@@ -48,9 +47,12 @@ readmomofile <- function() {
     momo <- subset(momo, !negativeDelay)
   }
 
-  #Monday of last full week before DayOfAggregation (equal to DayOfAggregation if its a monday)
-  weekday <- ISOweek::ISOweekday(euromomoCntrl$DayOfAggregation)
-  dLastFullWeek <- as.Date(euromomoCntrl$DayOfAggregation) - ifelse(weekday == 6, 6-1, (weekday - 1) + 7)
+  #Monday of last full week before DayOfAggregation (equal to DayOfAggregation if its a Sunday)
+  #dLastFullWeek <- as.Date(euromomoCntrl$DayOfAggregation) - ifelse(weekday == 6, 6-1, (weekday - 1) + 7)
+  #Monday of last full week before DayOfAggregation.
+  #Example: Sun, 2014-11-30 -> Mon, 2014-11-17
+  weekdayDOA <- ISOweek::ISOweekday(euromomoCntrl$DayOfAggregation)
+  dLastFullWeek <- as.Date(euromomoCntrl$DayOfAggregation) - 7 - (weekdayDOA - 1)
 
   #All observations arriving after DayOfAggregation need to be removed.
   #Actually, its not DayOfAggregation, but those with a DoR which is
