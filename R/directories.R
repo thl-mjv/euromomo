@@ -31,7 +31,7 @@ directories<-function(lastFullWeek,wd=c("none","upper","lower"),debugmode=FALSE)
     setwd(week.dir)
   if(match.arg(wd)=="lower")
     setwd(root)
-  for(i in c("diagnostics","complete", "output")) {
+  for(i in c("diagnostics","data", "output")) {
     tmp<-file.path(week.dir,i)
     if(!file.exists(tmp))
       dir.create(tmp)

@@ -6,15 +6,16 @@
 delay(data, method = c("poisson", "negbin"), ..., holiday)
 }
 \arguments{
+\item{data}{source data from aggregation}
+
 \item{method}{either "poisson" or "negbin"}
 
 \item{...}{other options passed to actual algorithms}
 
 \item{holiday}{file with holiday definitions}
-
-\item{rTDF}{source data from aggregation}
-
-\item{a}{data frame with added column for delay corrected number of deaths and it's estimated variance}
+}
+\value{
+a data frame with added column for delay corrected number of deaths and it's estimated variance
 }
 \description{
 Delay correction

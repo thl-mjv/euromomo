@@ -3,14 +3,16 @@
 \alias{baseline}
 \title{Calculate baseline}
 \usage{
-baseline(data, seasonality = 1, trend = 1, group = NULL, ...)
+baseline(data, seasonality = 1, trend = 1, ...)
 }
 \arguments{
 \item{data}{input data in EuroMOMO format}
 
 \item{seasonality}{number of seasonality components (0 or 1)}
 
-\item{group}{which group to use. Groups are defined using variables so this must be a name of an actual variable in the data}
+\item{trend}{include a linear trend (0 or 1)}
+
+\item{...}{Extra parameters for glm}
 }
 \value{
 EuroMOMO data with predicted values, prediction variances and overdispersion

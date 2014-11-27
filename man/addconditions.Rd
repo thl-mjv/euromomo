@@ -4,12 +4,10 @@
 \title{Create condition variables and add them to the dataset}
 \usage{
 addconditions(data, spring = 15:26, autumn = 36:45,
-  last = getOption("euromomo")$DayOfAggregation, delay = 0, group = NULL)
+  last = getOption("euromomo")$DayOfAggregation, delay = 0)
 }
 \arguments{
 \item{data}{input data in EuroMOMO format}
-
-\item{group}{which group to use. Groups are defined using variables so this must be a name of an actual variable in the data}
 
 \item{spring:}{Week numbers for spring period, vector of integers between 1 and 53}
 

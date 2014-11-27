@@ -22,17 +22,18 @@
 #' Calculate baseline
 #' @param data input data in EuroMOMO format
 #' @param seasonality number of seasonality components (0 or 1)
-#' @param group which group to use. Groups are defined using variables so this must be a name of an actual variable in the data
+#' @param trend include a linear trend (0 or 1)
+#' @param ... Extra parameters for glm
 #' @return EuroMOMO data with predicted values, prediction variances and overdispersion
 #' @export
-baseline <- function(data, seasonality =1, trend=1,group=NULL,...){
+baseline <- function(data, seasonality =1, trend=1,...){
   # STEP 1: Calculate the trend (ISOweek) as continuous)
   if(is.null(trend))
     trend<-as.numeric(getOption("euromomo")$trend)
   if(is.null(trend)) trend<-0
   if(is.character(trend)) trend<-as.numeric(eval(parse(text=trend)))
 
-  data<-addweeks(data,group=group)
+  data<-addweeks(data)
   # possible spline basis generation goes here
   # splines removed
 
@@ -70,9 +71,12 @@ baseline <- function(data, seasonality =1, trend=1,group=NULL,...){
     glm_form<-paste(glm_form,"+",paste(as.vector(outer(c("sin","cos"),1:seasonality,paste,sep="")),collapse="+"))
 
   # Need to consider (at some point) whether to allow using other estimation functions (glm2, mgcv, ...)
-  fit <- try(glm(formula(glm_form), data = data[data$cond==1, ], family = quasipoisson()))
+  fit <- try(glm(formula(glm_form), data = data[data$cond==1, ],
+                 family = quasipoisson(),na.action=na.omit,...))
 
   if(!inherits(fit,"try-error")) {
+    if(!fit$converged)
+      warning("The baseline estimation did not converge")
 
     # STEP 4: Prediction of the model
     pred <- predict(fit, newdata = data, type = "link", se=TRUE)
@@ -104,13 +108,12 @@ baseline <- function(data, seasonality =1, trend=1,group=NULL,...){
 #' @param autumn: Week numbers for autumn period, vector of integers between 1 and 53
 #' @param last: The last period that will be excluded
 #' @param delay: the number of delay week
-#' @param group which group to use. Groups are defined using variables so this must be a name of an actual variable in the data
 #' @return EuroMOMO data with extra variables with conditions used for modelling
 #' @export
-addconditions <- function(data, spring=15:26, autumn=36:45, last=getOption("euromomo")$DayOfAggregation, delay=0, group=NULL){
+addconditions <- function(data, spring=15:26, autumn=36:45, last=getOption("euromomo")$DayOfAggregation, delay=0){
 
   # Run addweeks function to create some week variables and trend
-  data<-addweeks(data,group=group)
+  data<-addweeks(data)
 
   # Create Cond3: Period for spring and autumn
   # spring and autumn must be vectors of integers between 1 and 53
@@ -133,10 +136,9 @@ addconditions <- function(data, spring=15:26, autumn=36:45, last=getOption("euro
 
 #' Create week variable and trend variable
 #' @param data input data in EuroMOMO format
-#' @param group which group to use. Groups are defined using variables so this must be a name of an actual variable in the data
 #' @return EuroMOMO data with extra variables with YearWeek and trend variable
 #' @export
-addweeks <- function(data,group=NULL){
+addweeks <- function(data){
   # Checks
   if(!"ISOweek" %in% names(data)) stop("Invalid data")
   if(!all(c("YoDi","WoDi") %in% names(data))) {
@@ -144,14 +146,6 @@ addweeks <- function(data,group=NULL){
     #data$WoDi<-as.numeric(substring(as.character(data$ISOweek),7))
     data$YoDi<- ISOyear( as.character(data$ISOweek))
     data$WoDi<- ISOwoy( as.character(data$ISOweek))
-  }
-
-  # Subset to right group
-  # fails if called as addweeks(data,groups=c("something","somethingelse"))
-  if(!is.null(group)) {
-    if(length(group)>1) group<-group[1]
-    if(!group%in%names(data)) warning("Group variable not found in the data")
-    else data<-subset(data,get(group)==1)
   }
 
   # Create Year-Week of Death - NO LONGER NEEDE
