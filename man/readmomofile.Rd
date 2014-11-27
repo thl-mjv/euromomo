@@ -3,7 +3,10 @@
 \alias{readmomofile}
 \title{Function to read a file with individual case data from file.}
 \usage{
-readmomofile()
+readmomofile(dateFormat = "\%Y-\%m-\%d")
+}
+\arguments{
+\item{dateFormat}{Format string specifying how the dates are formatted. Default: \code{"\%Y-\%m-\%d"}.}
 }
 \value{
 Returns a list containing the elements

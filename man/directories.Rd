@@ -3,9 +3,12 @@
 \alias{directories}
 \title{Create the needed directories}
 \usage{
-directories(wd = c("none", "upper", "lower"), debugmode = FALSE)
+directories(lastFullWeek, wd = c("none", "upper", "lower"),
+  debugmode = FALSE)
 }
 \arguments{
+\item{lastFullWeek}{ISO Week of the last full week}
+
 \item{wd}{if "none", do not change the working directory, if "lower", change directory to weekly outputs directory, if "upper" change directory aboe that}
 
 \item{debugmode}{if TRUE use for debugging}

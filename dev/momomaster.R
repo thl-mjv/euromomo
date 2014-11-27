@@ -12,12 +12,12 @@ library("euromomo")
 parseDefaultsFile("defaults.txt")
 checkOptions()
 
-# Create the working directory
-week.dir<-directories(debugmode=FALSE)
-cat("Results are stored in ",week.dir,"\n")
-
 # Read in the raw data
 momoFile <- readmomofile()
+
+# Create the working directory
+week.dir<-directories(lastFullWeek=momoFile$dLastFullWeek)
+cat("Results are stored in ",week.dir,"\n")
 
 #Create the groups (as stored in the option file)
 momo <- makeGroups(momoFile$momo)
@@ -67,7 +67,7 @@ for (i in groups) {
   data4 <- zscore(data3)
 
   # Calculate excess
-  data5 <- excess(data4,type="both")
+  data5 <- excess(data4,type=getOption("euromomo")$Delayvariance)
   #tail(data5)
 
   # Generate output
