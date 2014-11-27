@@ -25,7 +25,7 @@ output <- function(data) {
     axis(side = 1, at = idx, labels = ISOweek[idx])
     axis(side = 2)
     box()
-    title(main = paste("Number of deaths -", ISOweek[nrow(data)], "\n", getOption("euromomo")$Country, "- Group", groupOpts["label"]))
+    title(main = paste("Number of deaths -", ISOweek[nrow(data)], "\n", getOption("euromomo")$Country, "-", groupOpts["label"]))
     # Add the graphs
     lines(x = 1:nrow(data), y = onb, col = "black")
     lines(x = 1:nrow(data), y = ifelse(onb != cnb, cnb, NA), col = "darkgreen")
@@ -77,7 +77,7 @@ output <- function(data) {
     abline(h =  seq(from = -20, to = 20, by = 2), col = "orange")
     abline(h = 0, col = "red")
     box()
-    title(main = paste("Z-score -", ISOweek[nrow(data)], "\n", getOption("euromomo")$Country, "- Group", groupOpts["label"]))
+    title(main = paste("Z-score -", ISOweek[nrow(data)], "\n", getOption("euromomo")$Country, "-", groupOpts["label"]))
     # Add the graphs
     lines(x = 1:nrow(data), y = Zscore, col = "black")
     lines(x = 1:nrow(data), y = ifelse(cond == 1, Zscore, NA), col = "blue")
