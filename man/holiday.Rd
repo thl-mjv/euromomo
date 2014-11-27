@@ -7,8 +7,9 @@ holiday(holiday.filename = "data/holidays.txt")
 }
 \arguments{
 \item{holiday.filename}{name of the file}
-
-\item{a}{data.frame with columns ISOweek and something}
+}
+\value{
+a data.frame with columns ISOweek and something
 }
 \description{
 Manage the holiday files

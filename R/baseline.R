@@ -22,7 +22,9 @@
 #' Calculate baseline
 #' @param data input data in EuroMOMO format
 #' @param seasonality number of seasonality components (0 or 1)
+#' @param trend include a linear trend (0 or 1)
 #' @param group which group to use. Groups are defined using variables so this must be a name of an actual variable in the data
+#' @param ... Extra parameters (not used at the moment?)
 #' @return EuroMOMO data with predicted values, prediction variances and overdispersion
 #' @export
 baseline <- function(data, seasonality =1, trend=1,group=NULL,...){
@@ -100,10 +102,10 @@ baseline <- function(data, seasonality =1, trend=1,group=NULL,...){
 
 #' Create condition variables and add them to the dataset
 #' @param data input data in EuroMOMO format
-#' @param spring: Week numbers for spring period, vector of integers between 1 and 53
-#' @param autumn: Week numbers for autumn period, vector of integers between 1 and 53
-#' @param last: The last period that will be excluded
-#' @param delay: the number of delay week
+#' @param spring Week numbers for spring period, vector of integers between 1 and 53
+#' @param autumn Week numbers for autumn period, vector of integers between 1 and 53
+#' @param last The last period that will be excluded
+#' @param delay the number of delay week
 #' @param group which group to use. Groups are defined using variables so this must be a name of an actual variable in the data
 #' @return EuroMOMO data with extra variables with conditions used for modelling
 #' @export

@@ -35,7 +35,7 @@ ISOyear <- function(x) {
 }
 
 #' Function that calculates the start of the season
-#' @param x: vector of ISOweek
+#' @param x vector of ISOweek
 #' @return a vector of begining of the season
 #' @export
 ISOseasonStart <- function(x){
