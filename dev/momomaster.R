@@ -91,7 +91,7 @@ final <- do.call("rbind",results.list)
 rownames(final) <- NULL
 
 #Restrict to EurMOMO hub pre-specified groups.
-final4hub.complete <- final4hub.complete <- subset(final, group.name %in% paste("momodefault",1:3,sep=""))
+final4hub.restricted <- final4hub.complete <- subset(final, group.name %in% paste("momodefault",1:3,sep=""))
 #Restrict to "legal" columns.
 final4hub.restricted[,c("nb","onb","cnb","pnb")] <- NA
 
