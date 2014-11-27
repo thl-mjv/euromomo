@@ -9,7 +9,10 @@ Authors@R: c(MJV = person(given=c("Mikko","J."),family="Virtanen",
     MH = person("Michael", "Hoehle",
     email = "hoehle@math.su.se",
     role = c("ctb")))
-Author: Mikko J Virtanen [aut, cre, ctb], ..., Michael Hoehle [ctb], ...
+Author: Mikko J Virtanen [aut, cre, ctb], Laura Espenhain [aut], Jens Nielsen
+    [aut], Jan van de Kassteele [aut], Michael Hoehle [aut], Achilleas
+    Tsoumanis [aut], Helen Green [aut], Inmaculade Leon Gomez [aut], Ajay Oza
+    [aut], Liliana do Carmo Cerdeira Antunes [aut]
 Maintainer: Mikko J Virtanen <mikko.virtanen@thl.fi>
 Depends:
     ISOweek
