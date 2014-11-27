@@ -11,14 +11,18 @@
 
 parseDefaultsFile <- function(fileName, debug=FALSE) {
   #Read in file with default parameter configrations
-  if (file.exists(system.file("extdata", "defaults.txt", package="euromomo"))) {
+  defaultFile<-NULL
+  candidates<-c(system.file("extdata", "defaults.txt", package="euromomo"),
+                file.path(getwd(), "inst","extdata", "defaults.txt"))
+  if (file.exists(candidates[1])) {
     cat("Using package file.\n")
-    defaultFile <- system.file("extdata", "defaults.txt", package="euromomo")
-  } else {
-    cat("Using: ", file.path(paste(getwd(), "/inst/extdata", sep=""), "defaults.txt") ,"\n")
-    defaultFile <- file.path(paste(getwd(), "/inst/extdata", sep=""), "defaults.txt") 
+    defaultFile <- candidates[1]
   }
-
+  if(is.null(defaultFile) & file.exists(candidates[2])) {
+    cat("Using: ",candidates[2] ,"\n")
+    defaultFile <- candidates[2]
+  }
+  if(!file.exists(fileName)) fileName<-NULL
   #Make the list of files.
   files <- c(defaultFile, fileName)
 

@@ -67,8 +67,10 @@ delay.nb <- function(rTDF, holiday) {
 
   # Calculate the expected number of deaths and the variance
   # and plug them into rTDF.pred
-  rTDF.pred[rows, "cnb"] <- nD + (nD+1)*(1-fD)/fD
-  rTDF.pred[rows, "v.cnb"] <- (nD+1)*(1-fD)/fD^2
+  pred  <- nD + (nD+1)*(1-fD)/fD
+  vpred <- (nD+1)*(1-fD)/fD^2
+  rTDF.pred[rows,   "cnb"] <- ifelse(is.finite( pred), pred,NA)
+  rTDF.pred[rows, "v.cnb"] <- ifelse(is.finite(vpred),vpred,NA)
 
   # Export the results
   return(rTDF.pred)

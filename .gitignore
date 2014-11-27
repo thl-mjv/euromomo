@@ -10,3 +10,5 @@
 delay.txt
 *.Rout
 *.png
+dev/*.txt
+dev/EUROMOMO-*
