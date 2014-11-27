@@ -3,13 +3,13 @@ Type: Package
 Title: EuroMoMo algorithm
 Version: 1.0
 Date: 2014-11-26
-Authors@R: c(MJV = person("Mikko", "J.","Virtanen",
+Authors@R: c(MJV = person(given=c("Mikko","J."),family="Virtanen",
     email = "mikko.virtanen@thl.fi",
     role = c("aut", "cre", "ctb")),
-    MH = person("Michael", "Höhle",
+    MH = person("Michael", "Hoehle",
     email = "hoehle@math.su.se",
     role = c("ctb")))
-Author: Mikko J Virtanen [aut, cre, ctb], ..., Michael Höhle [ctb], ...
+Author: Mikko J Virtanen [aut, cre, ctb], ..., Michael Hoehle [ctb], ...
 Maintainer: Mikko J Virtanen <mikko.virtanen@thl.fi>
 Depends:
     ISOweek

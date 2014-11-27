@@ -2,6 +2,7 @@
 
 export(ISOseasonStart)
 export(ISOwoy)
+export(ISOyear)
 export(addconditions)
 export(addweeks)
 export(baseline)
