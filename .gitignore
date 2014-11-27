@@ -12,3 +12,4 @@ delay.txt
 *.png
 dev/*.txt
 dev/EUROMOMO-*
+.DS_Store

@@ -28,8 +28,12 @@ delay.nb <- function(rTDF, holiday) {
     open <- ifelse(as.character(ISOweek)>=opts$StartDelayEst,
                    as.numeric(opts$nWorkdays) - closed,
                    NA)
+    # Safeguard against weeks with zero open days (rare but possible)
+    open<-ifelse(open==0,.5,open)
     rm(closed)
   })
+
+
   # Add shifted vector with working days to hTDF for the number of delays
   for (i in 1:back) {
     hTDF <- cbind(hTDF, c(rep(NA, i), hTDF$open[1:(nrow(hTDF)-i)]))
@@ -70,7 +74,7 @@ delay.nb <- function(rTDF, holiday) {
   pred  <- nD + (nD+1)*(1-fD)/fD
   vpred <- (nD+1)*(1-fD)/fD^2
   rTDF.pred[rows,   "cnb"] <- ifelse(is.finite( pred), pred,NA)
-  rTDF.pred[rows, "v.cnb"] <- ifelse(is.finite(vpred),vpred,NA)
+  rTDF.pred[rows, "v.cnb"] <- ifelse(is.finite(vpred), pred,NA)
 
   # Export the results
   return(rTDF.pred)
