@@ -9,14 +9,15 @@ library("euromomo")
 
 
 ### Now using the options
-parseDefaultsFile("defaults-fi.txt")
+parseDefaultsFile("defaults.txt")
 checkOptions()
 
 # Create the working directory
-week.dir<-directories(debugmode=TRUE)
+week.dir<-directories(debugmode=FALSE)
+cat("Results are stored in ",week.dir,"\n")
 
 # Read in the raw data
-momoFile <- readmomofile()
+momoFile <- readmomofile(getOption("euromomo"))
 
 #Create the groups (as stored in the option file)
 momo <- makeGroups(momoFile$momo)
