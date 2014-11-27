@@ -13,7 +13,7 @@ parseDefaultsFile("defaults.txt")
 checkOptions()
 
 # Read in the raw data
-momoFile <- readmomofile(getOption("euromomo"))
+momoFile <- readmomofile()
 
 # Create the working directory
 week.dir<-directories(lastFullWeek=momoFile$dLastFullWeek)
@@ -67,7 +67,7 @@ for (i in groups) {
   data4 <- zscore(data3)
 
   # Calculate excess
-  data5 <- excess(data4,type="both")
+  data5 <- excess(data4,type=getOption("euromomo")$Delayvariance)
   #tail(data5)
 
   # Generate output
