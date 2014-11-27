@@ -1,7 +1,7 @@
 #' Manage the holiday files
 #'
 #' @param holiday.filename name of the file
-#' @param a data.frame with columns ISOweek and something
+#' @return a data.frame with columns ISOweek and something
 #' @export
 holiday <- function(holiday.filename = "data/holidays.txt") {
   # Read holiday data
@@ -18,11 +18,11 @@ holiday <- function(holiday.filename = "data/holidays.txt") {
 }
 #' Delay correction
 #'
-#' @param rTDF source data from aggregation
+#' @param data source data from aggregation
 #' @param method either "poisson" or "negbin"
 #' @param ... other options passed to actual algorithms
 #' @param holiday file with holiday definitions
-#' @param a data frame with added column for delay corrected number of deaths and it's estimated variance
+#' @return a data frame with added column for delay corrected number of deaths and it's estimated variance
 #' @export
 
 delay <- function(data,

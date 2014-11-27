@@ -6,7 +6,7 @@
 ISOseasonStart(x)
 }
 \arguments{
-\item{x:}{vector of ISOweek}
+\item{x}{vector of ISOweek}
 }
 \value{
 a vector of begining of the season

@@ -10,7 +10,11 @@ baseline(data, seasonality = 1, trend = 1, group = NULL, ...)
 
 \item{seasonality}{number of seasonality components (0 or 1)}
 
+\item{trend}{include a linear trend (0 or 1)}
+
 \item{group}{which group to use. Groups are defined using variables so this must be a name of an actual variable in the data}
+
+\item{...}{Extra parameters (not used at the moment?)}
 }
 \value{
 EuroMOMO data with predicted values, prediction variances and overdispersion

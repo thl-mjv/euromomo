@@ -22,6 +22,8 @@
 #' Calculate baseline
 #' @param data input data in EuroMOMO format
 #' @param seasonality number of seasonality components (0 or 1)
+#' @param trend include a linear trend (0 or 1)
+#' @param ... Extra parameters for glm
 #' @return EuroMOMO data with predicted values, prediction variances and overdispersion
 #' @export
 baseline <- function(data, seasonality =1, trend=1,...){
@@ -70,8 +72,7 @@ baseline <- function(data, seasonality =1, trend=1,...){
 
   # Need to consider (at some point) whether to allow using other estimation functions (glm2, mgcv, ...)
   fit <- try(glm(formula(glm_form), data = data[data$cond==1, ],
-                 family = quasipoisson(),na.action=na.omit,
-                 control=glm.control(maxit=25)))
+                 family = quasipoisson(),na.action=na.omit,...))
 
   if(!inherits(fit,"try-error")) {
     if(!fit$converged)
