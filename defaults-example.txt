@@ -3,45 +3,59 @@ Country=Denmark
 Counties=Seeland,Jylland
 Institution=ISS
 WorkDirectory=.
-InputFile=data/DoD_DoR.txt
-HolidayFile=data/holidays.txt
-BaselineSeasons=5
+InputFile=DoD_DoR.txt
+HolidayFile=DKWork.txt
+BaselineSeasons=7
 StartDelayEst=2008-W01
-DayOfAggregation=2013-01-03
+DayOfAggregation=2014-11-27
 nWorkdays=5
+DelayVariance=baseline
+#DelayVariance=both
 
 ### GROUPS ###
+
+# Definition #
 group.momodefault1.definition=(age<5)
-group.momodefault1.label=0-4
-group.momodefault2.definition=((5<=age) & (age<15))
-group.momodefault2.label=5-14
-group.momodefault3.definition=((15<=age) & (age<65))
-group.momodefault3.label=15-64
-group.momodefault4.definition=(65<=age)
-group.momodefault4.label=65+
-group.momodefault5.definition=(0<=age)
-group.momodefault5.label=Total
-
-
-
-### Back weeks for delay-adjustment dependent on group ###
+group.momodefault1.label=age 0-4 years
+# Weeks of delay-adjustment#
 group.momodefault1.back=6
-group.momodefault2.back=6
-group.momodefault3.back=6
-group.momodefault4.back=6
-group.momodefault5.back=6
-
-
-
-### Baseline dependent on group ###
+# Regression ###
 group.momodefault1.seasonality=FALSE
 group.momodefault1.trend=TRUE
+
+# Definition #
+group.momodefault2.definition=(5<=age)&(age<15)
+group.momodefault2.label=age 5-14
+# Weeks of delay-adjustment#
+group.momodefault2.back=6
+# Regression ###
 group.momodefault2.seasonality=FALSE
 group.momodefault2.trend=TRUE
+
+# Definition #
+group.momodefault3.definition=(15<=age)&(age<65)
+group.momodefault3.label=age 15-64
+# Weeks of delay-adjustment#
+group.momodefault3.back=6
+# Regression ###
 group.momodefault3.seasonality=TRUE
-group.momodefault3.trend=FALSE
+group.momodefault3.trend=TRUE
+
+# Definition #
+group.momodefault4.definition=(65<=age)
+group.momodefault4.label=age 65+
+# Weeks of delay-adjustment#
+group.momodefault4.back=6
+# Regression ###
 group.momodefault4.seasonality=TRUE
 group.momodefault4.trend=TRUE
+
+# Definition #
+group.momodefault5.definition=(0<=age)
+group.momodefault5.label=all ages
+# Weeks of delay-adjustment#
+group.momodefault5.back=6
+# Regression ###
 group.momodefault5.seasonality=TRUE
 group.momodefault5.trend=TRUE
 
