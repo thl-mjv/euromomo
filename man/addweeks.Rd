@@ -3,12 +3,10 @@
 \alias{addweeks}
 \title{Create week variable and trend variable}
 \usage{
-addweeks(data, group = NULL)
+addweeks(data)
 }
 \arguments{
 \item{data}{input data in EuroMOMO format}
-
-\item{group}{which group to use. Groups are defined using variables so this must be a name of an actual variable in the data}
 }
 \value{
 EuroMOMO data with extra variables with YearWeek and trend variable

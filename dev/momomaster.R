@@ -46,7 +46,8 @@ for (i in groups) {
   print(head(rTDF))
 
   # Delay adjustment
-  drTDF<-delay(rTDF,method="negbin",holiday=holiday.file)
+  #drTDF<-delay(rTDF,method="negbin",holiday=holiday.file)
+  drTDF<-delay.nb(rTDF,holiday=holiday.file)
   cat("Group",groupOpts["label"]," with delay correction\n")
   print(tail(drTDF,20))
 
@@ -83,6 +84,7 @@ for (i in groups) {
   # Store the results
   results.list[[i]]<-data5
 }
+
 # on most system, you can check the outputs using
 # system(paste("open",week.dir))
 final <- do.call("rbind",results.list)
