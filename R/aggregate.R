@@ -1,11 +1,18 @@
 library("ISOweek")
 
 
+#' Extract reporting triangle from \code{data.frame}
+#'
 #' R function for reading in and performing the aggregation necessary
 #' to get the reporting triangle.
+#'
 #' @param momo is a data.frame with the complete data
 #'        back is the number of weeks for delay-adjustment age group specific
 #'        groupindicator is the indicator of the age group for data aggregation
+#' @param groupindicator A vector of Booleans of the same length as \code{momo}
+#' @param back Number of weeks to go back in the delay distribution, i.e. we look at delays \code{0:back} .
+#' @param dWeeks Vector of Dates containing all Mondays of the ISO weeks to triangulate.
+#' @param dLastFullWeek Data object containing the Monday of the last full week before day of aggregation. Note: dLastFullWeek = max(dWeeks)
 #' @return A list containing the reporting triangle for each age group, the cumulated reporting triangle, the time points and the delays.
 #' @export
 df2ReportingTriangle <- function(momo, groupindicator, back, dWeeks, dLastFullWeek) {
@@ -22,35 +29,6 @@ df2ReportingTriangle <- function(momo, groupindicator, back, dWeeks, dLastFullWe
     Delay[Delay>back] <- back
   })
 
-
-  #Monday of last full week before dAggregation (equal to dAggregation if its a monday)
-  #weekday <- ISOweek::ISOweekday(euromomoCntrl$dAggregation)
-  #dLastFullWeek <- euromomoCntrl$dAggregation - ifelse(weekday == 6, 6-1, (weekday - 1) + 7)
-
-
-  #All observations arriving after dAggregation need to be removed.
-  #Actually, its not dAggregation, but those with a DoR which is
-  #in the last full week before dAggregation
-  #cat("Removing ",sum(momo$DoRMon > dLastFullWeek)," observations reported after dAggregation=",as.character(euromomoCntrl$dAggregation),".\n")
-  #momo <- subset(momo, momo$DoRMon <= dLastFullWeek)
-
-#   #This should be a parameter somewhere and needs to be synced with EuroMomo
-#   #parameter file. For now: Go back 5 years and then to closest monday more
-#   #than 5 years ago.
-#   #dStart <- seq(dLastFullWeek,length=2,by="-6 years")[-1]
-#   firstWeekInData <- min(momo$DoDMon) - (ISOweek::ISOweekday(min(momo$DoDMon)) - 1)
-#   dStart <- firstWeekInData
-#   dStart <- dStart - (ISOweek::ISOweekday(dStart) - 1)
-#   #browser()
-#   if (firstWeekInData > dStart) {
-#     stop("Data don't go back as far as requested.")
-#   }
-#   #Subset data to be only observations with DoD
-#   dWeeks <- seq(dStart, dLastFullWeek, by="1 week")
-#   insideWeeks <- (momo$DoDMon >= dStart) & (momo$DoDMon <= dLastFullWeek)
-#   cat("Removing",sum(!insideWeeks), "observations not within", paste(dStart,"-",dLastFullWeek),".\n")
-#   momo <- subset(momo, insideWeeks)
-
   #Aggregate data between dStart and dLastFullWeek (CHECK WITH EuroMOMO Parameter Definition)
   #to determine reporting triangle
   YWoDiFac <- factor(as.character(momo$YWoDi),levels=as.character(ISOweek::ISOweek(dWeeks)))
@@ -58,7 +36,6 @@ df2ReportingTriangle <- function(momo, groupindicator, back, dWeeks, dLastFullWe
   rT <- table(YWoDiFac,DelayFac)
 
   #Put NA's at position of structural zeroes
-
   cellAvailable <- outer(dWeeks, 0:back, function(dWeeks,Delay) {
     dWeeks + Delay*7 <= dLastFullWeek
   })
@@ -79,13 +56,8 @@ df2ReportingTriangle <- function(momo, groupindicator, back, dWeeks, dLastFullWe
   return(list(cumRT=cumRT, rT=rT,dWeeks=dWeeks, delays=0:back))
 }
 
-# Deprecated function to read IRISH data
-#aggregateIE <- function() {
-#  momo <- foreign::read.dta(file="../../SampleData/delay-Total-Ireland-2014-47.dta")
-#  head(momo,n=1)
-#}
-
 #' Turn a triangle into a data.frame
+#'
 #' @param rT an output from df2ReportingTriangle
 #' @return a data frame with column ISOweek and one column for each delay band
 #' @export

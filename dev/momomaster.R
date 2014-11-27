@@ -17,7 +17,7 @@ week.dir<-directories(debugmode=FALSE)
 cat("Results are stored in ",week.dir,"\n")
 
 # Read in the raw data
-momoFile <- readmomofile(getOption("euromomo"))
+momoFile <- readmomofile()
 
 #Create the groups (as stored in the option file)
 momo <- makeGroups(momoFile$momo)

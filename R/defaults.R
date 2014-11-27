@@ -22,7 +22,10 @@ parseDefaultsFile <- function(fileName, debug=FALSE) {
     cat("Using: ",candidates[2] ,"\n")
     defaultFile <- candidates[2]
   }
-  if(!file.exists(fileName)) fileName<-NULL
+  if(!file.exists(fileName)) {
+    warning("The specified file \"", fileName, "\" does not exist. I'm ignoring it!")
+    fileName<-NULL
+  }
   #Make the list of files.
   files <- c(defaultFile, fileName)
 
@@ -63,6 +66,12 @@ parseDefaultsFile <- function(fileName, debug=FALSE) {
     }
   }
 
+  # Check that DayOfAggregation is given, otherwise replace with today's date
+  if(is.null(out$DayOfAggregation)){
+    out$DayOfAggregation <- Sys.Date()
+    warning(paste("DayOfAggregation was not given. SystemDate (", Sys.Date(), ") was used instead.\n", sep=""))
+  }
+
   options(euromomo=out)
   invisible(out)
 }
@@ -95,22 +104,24 @@ checkOptions <- function() {
     stop("The following variable names are missing: ",importantVarNames[idxMissing],"\n.")
   }
 
-  # Check that DayOfAggregation is given, otherwise replace with today's date
-  if(is.null(opts$DayOfAggregation)){
-    opts$DayOfAggregation <- Sys.Date()
-    warning(paste("DayOfAggregation was not given. SystemDate (", Sys.Date(), ") was used instead.\n", sep=""))
-  }
+#   # Check that DayOfAggregation is given, otherwise replace with today's date
+#   if(is.null(opts$DayOfAggregation)){
+#     opts$DayOfAggregation <- Sys.Date()
+#     warning(paste("DayOfAggregation was not given. SystemDate (", Sys.Date(), ") was used instead.\n", sep=""))
+#   }
   # Check if DayOfAggregation is valid.
   if(as.Date(opts$DayOfAggregation)>Sys.Date()){
     stop("Invalid DayOfAggregation given.\n")
   }
 
-  #Check that ISO weeks of except are valid.
-  dStart <- ISOweek::ISOweek2date(paste(opts$except[,1],"-1",sep=""))
-  dEnd <- ISOweek::ISOweek2date(paste(opts$except[,2],"-1",sep=""))
-  if (any(dStart > dEnd)) {
-    idx <- which(dStart > dEnd)
-    stop(paste("dStart > dEnd for entries:", paste(opts$except[idx,],collapse=" : ")))
+  #Check that if there are ISO weeks of except that these are valid.
+  if (length(opts[["except"]] > 0)) {
+    dStart <- ISOweek::ISOweek2date(paste(opts$except[,1],"-1",sep=""))
+    dEnd <- ISOweek::ISOweek2date(paste(opts$except[,2],"-1",sep=""))
+    if (any(dStart > dEnd)) {
+      idx <- which(dStart > dEnd)
+      stop(paste("dStart > dEnd for entries:", paste(opts$except[idx,],collapse=" : ")))
+    }
   }
 
   #Check that each group has at least the two necessary attributes
