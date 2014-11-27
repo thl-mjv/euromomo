@@ -56,10 +56,14 @@ for (i in groups) {
                        autumn=getOption("euromomo")$autumn,
                        delay=back,
                        last=getOption("euromomo")$DayOfAggregation)
+
+  #Add meta data (as a column replicating all the information).
+  data2WithMD <- addMetaData(df=data2, groupName=i, groupOptions=groupOpts)
+
   #summary(data2)
 
   # Estimate the baseline
-  data3 <- baseline(data2)
+  data3 <- baseline(data2WithMD)
   cat("Group",groupOpts["label"]," with baseline\n")
   print(tail(data3))
 
@@ -82,4 +86,23 @@ for (i in groups) {
 # on most system, you can check the outputs using
 # system(paste("open",week.dir))
 final <- do.call("rbind",results.list)
-summary(final)
+rownames(final) <- NULL
+
+#Restrict to EurMOMO hub pre-specified groups.
+final4hub.complete <- final4hub.complete <- subset(final, group.name %in% paste("momodefault",1:3,sep=""))
+#Restrict to "legal" columns.
+final4hub.restricted[,c("nb","onb","cnb","pnb")] <- NA
+
+
+#Build up the file name.
+#<MISSING>.
+countryStr <- "XXXX"
+ISOweek <- "20XX-WYY"
+write.table(final4hub.complete, file = file.path(week.dir, "data", filename=paste(countryStr,"-complete-",ISOweek,".txt",sep="")), quote = FALSE, sep = ";", row.names = FALSE)
+write.table(final4hub.restricted, file = file.path(week.dir, "data", filename=paste(countryStr,"-restricted-",ISOweek,".txt",sep="")), quote = FALSE, sep = ";", row.names = FALSE)
+
+
+#Small check.
+table(final4hub.complete$group.name)
+head(final4hub.restricted)
+
