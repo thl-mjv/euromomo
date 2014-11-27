@@ -97,9 +97,8 @@ final4hub.restricted[,c("nb","onb","cnb","pnb")] <- NA
 
 
 #Build up the file name.
-#<MISSING>.
-countryStr <- "XXXX"
-ISOweek <- "20XX-WYY"
+countryStr <- getOption("euromomo")[["Country"]]
+ISOweek <- ISOweek(momoFile$dLastFullWeek)
 write.table(final4hub.complete, file = file.path(week.dir, "data", filename=paste(countryStr,"-complete-",ISOweek,".txt",sep="")), quote = FALSE, sep = ";", row.names = FALSE)
 write.table(final4hub.restricted, file = file.path(week.dir, "data", filename=paste(countryStr,"-restricted-",ISOweek,".txt",sep="")), quote = FALSE, sep = ";", row.names = FALSE)
 
