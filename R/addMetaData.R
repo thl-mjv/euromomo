@@ -4,7 +4,7 @@
 #' @param groupName A string containing the name of the group.
 #' @param groupOptions A vector of strings containing the group specific options.
 #' @note There is a lot of redudant data here!
-#'
+#' @export
 addMetaData <- function(df, groupName, groupOptions) {
   #Extract options
   opts <- getOption("euromomo")

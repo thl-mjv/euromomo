@@ -90,20 +90,7 @@ for (i in groups) {
 final <- do.call("rbind",results.list)
 rownames(final) <- NULL
 
-#Restrict to EurMOMO hub pre-specified groups.
-final4hub.restricted <- final4hub.complete <- subset(final, group.name %in% paste("momodefault",1:3,sep=""))
-#Restrict to "legal" columns.
-final4hub.restricted[,c("nb","onb","cnb","pnb")] <- NA
+#Write files to hub
+writeHUBFiles(final=final, dLastFullWeek=momoFile$dLastFullWeek)
 
-
-#Build up the file name.
-countryStr <- getOption("euromomo")[["Country"]]
-ISOweek <- ISOweek(momoFile$dLastFullWeek)
-write.table(final4hub.complete, file = file.path(week.dir, "data", filename=paste(countryStr,"-complete-",ISOweek,".txt",sep="")), quote = FALSE, sep = ";", row.names = FALSE)
-write.table(final4hub.restricted, file = file.path(week.dir, "data", filename=paste(countryStr,"-restricted-",ISOweek,".txt",sep="")), quote = FALSE, sep = ";", row.names = FALSE)
-
-
-#Small check.
-table(final4hub.complete$group.name)
-head(final4hub.restricted)
 

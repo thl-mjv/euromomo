@@ -134,3 +134,28 @@ output <- function(data) {
     quote = FALSE, sep = ";", row.names = FALSE)
 }
 
+#' Write final output to HUB compatible files.
+#'
+#' @param final Final data.frame
+#' @param dLastFullWeek Last final week.
+#' @return Nothing
+#' @export
+#'
+writeHUBFiles <- function(final, dLastFullWeek) {
+  #Restrict to EurMOMO hub pre-specified groups.
+  final4hub.restricted <- final4hub.complete <- subset(final, group.name %in% paste("momodefault",1:5,sep=""))
+  #Restrict to "legal" columns.
+  final4hub.restricted[,c("nb","onb","cnb","pnb")] <- NA
+
+  #Build up the file name.
+  countryStr <- getOption("euromomo")[["Country"]]
+  ISOweek <- ISOweek(momoFile$dLastFullWeek)
+  write.table(final4hub.complete, file = file.path(week.dir, "data", filename=paste(countryStr,"-complete-",ISOweek,".txt",sep="")), quote = FALSE, sep = ";", row.names = FALSE)
+  write.table(final4hub.restricted, file = file.path(week.dir, "data", filename=paste(countryStr,"-restricted-",ISOweek,".txt",sep="")), quote = FALSE, sep = ";", row.names = FALSE)
+
+  #Small check.
+  table(final4hub.complete$group.name)
+  head(final4hub.restricted)
+
+  invisible()
+}
