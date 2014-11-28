@@ -3,7 +3,7 @@
 \alias{zscore}
 \title{Append zscores to the EuroMoMo data}
 \usage{
-zscore(data, type = c("baseline", "both"))
+zscore(data, type = momoopts("excessvartype"))
 }
 \arguments{
 \item{data}{a data frame in EuroMoMo format}

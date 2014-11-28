@@ -3,8 +3,7 @@
 \alias{excess}
 \title{Excess estimation}
 \usage{
-excess(data, multiplier = 2, type = c("baseline", "basedelay", "delay",
-  "both"))
+excess(data, multiplier = 2, type = momoopts("excessvartype"))
 }
 \arguments{
 \item{data}{a data frame in EuroMoMo format}

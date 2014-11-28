@@ -52,3 +52,18 @@ ISOseasonStart <- function(x){
 checkBeforePush <- function() {
   rm(list=ls()) ; source("momomaster.R")
 }
+
+momomatch<-function(arg,choices) {
+  if(is.null(arg)) return(choices[1])
+  print(ind<-pmatch(arg,choices))
+  if(is.na(ind)) stop("Argument does not match uniquely")
+  choices[ind]
+}
+
+momoopts<-function(opt) {
+  getOption("euromomo")[[opt]]
+}
+
+momogopts<-function(group,opt) {
+  getOption("euromomo")$groups[[group]][[opt]]
+}
