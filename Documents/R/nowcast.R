@@ -117,11 +117,13 @@ for (i in groups) {
   lines(seq_len(length(idxShow)), drTDF[idxShow,"cnb"],lwd=3,type="b")
 
   #Add the truth as well
-  lines(seq_len(length(idxShow)), observed(stsAll[whichPlot,]),lwd=3,lty=2,col="magenta")
+  #lines(seq_len(length(idxShow))-0.5, observed(stsAll[whichPlot,]),lwd=3,type="s",col="magenta")
 }
 
 plot(c(0,0),type="n",axes=FALSE,xlab="",ylab="")
-legend(x="center",c("bayes.trunc","delay.nb","truth"),col=c("blue","black","magenta"),lwd=3,bg="white",lty=c(1,1,2))
+legend(x="center",c("bayes.trunc","delay.nb"),col=c("blue","black"),lwd=3,bg="white",lty=c(1,1))
+
+#legend(x="center",c("bayes.trunc","delay.nb","truth"),col=c("blue","black","magenta"),lwd=3,bg="white",lty=c(1,1,1))
 
 #Close graphics device.
 dev.off()
