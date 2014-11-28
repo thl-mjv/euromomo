@@ -61,7 +61,9 @@ for (i in groups) {
   rTList <- df2ReportingTriangle(momo, groupIndicator, back, dWeeks=momoFile$dWeeks, dLastFullWeek=momoFile$dLastFullWeek) # something about the group
   rTDF <- rT2DataFrame(rTList$cumRT)
 
-  #Make sts object with the same information
+  #Make sts object with the same information.
+  #Problem: sts and stsAll do not agree, even on observations far back
+  #in time. WHY?
   sts <- linelist2sts( momoGroup, dateCol="DoD", aggregate.by="1 week",
                        dRange=momoFile$dWeeks)
   stsAll <- linelist2sts( momoGroupAll, dateCol="DoD", aggregate.by="1 week",
@@ -116,13 +118,16 @@ for (i in groups) {
   idxShow <- which(drTDF$ISOweek %in% ISOweek(plotPeriod))
   lines(seq_len(length(idxShow)), drTDF[idxShow,"cnb"],lwd=3,type="b")
 
+  lines(seq_len(length(idxShow)), drTDF[idxShow,"cnb"] - 1.96*sqrt(drTDF[idxShow,"v.cnb"]),lwd=1,lty=2)
+  lines(seq_len(length(idxShow)), drTDF[idxShow,"cnb"] + 1.96*sqrt(drTDF[idxShow,"v.cnb"]),lwd=1,lty=2)
+
+
   #Add the truth as well
   #lines(seq_len(length(idxShow))-0.5, observed(stsAll[whichPlot,]),lwd=3,type="s",col="magenta")
 }
 
 plot(c(0,0),type="n",axes=FALSE,xlab="",ylab="")
 legend(x="center",c("bayes.trunc","delay.nb"),col=c("blue","black"),lwd=3,bg="white",lty=c(1,1))
-
 #legend(x="center",c("bayes.trunc","delay.nb","truth"),col=c("blue","black","magenta"),lwd=3,bg="white",lty=c(1,1,1))
 
 #Close graphics device.
