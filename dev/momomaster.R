@@ -64,7 +64,7 @@ for (i in groups) {
   #summary(data2)
 
   # Estimate the baseline
-  data3 <- baseline(data2WithMD)
+  data3 <- baseline(data2WithMD,groupOptions=groupOpts)
   cat("Group",groupOpts["label"]," with baseline\n")
   print(tail(data3))
 

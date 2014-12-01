@@ -21,27 +21,29 @@
 
 #' Calculate baseline
 #' @param data input data in EuroMOMO format
-#' @param seasonality number of seasonality components (0 or 1)
-#' @param trend include a linear trend (0 or 1)
+#' @param groupOptions vector of group specific options
+#' @param seasonality number of seasonality components (0 or 1) (overrides groupOptions, if given)
+#' @param trend include a linear trend (0 or 1) (overrides groupOptions, if given)
 #' @param ... Extra parameters for glm
 #' @return EuroMOMO data with predicted values, prediction variances and overdispersion
 #' @export
-baseline <- function(data, seasonality =1, trend=1,...){
+baseline <- function(data, groupOptions,seasonality =1, trend=1,...){
   # STEP 1: Calculate the trend (ISOweek) as continuous)
-  if(is.null(trend))
-    trend<-as.numeric(getOption("euromomo")$trend)
-  if(is.null(trend)) trend<-0
+  if(missing(trend)) # not give in call
+    trend<-groupOptions["trend"]
   if(is.character(trend)) trend<-as.numeric(eval(parse(text=trend)))
+  if(is.null(trend)) trend<-1
 
   data<-addweeks(data)
   # possible spline basis generation goes here
   # splines removed
 
   # STEP 2: Calculate the sin-cos trends
-  if(is.null(seasonality))
-    seasonality<-as.numeric(getOption("euromomo")$seasonality)
-  if(is.null(seasonality)) seasonality<-0
+  if(missing(seasonality))
+    seasonality<-groupOptions["seasonality"]
   if(is.character(seasonality)) seasonality<-as.numeric(eval(parse(text=seasonality)))
+  if(is.null(seasonality)) seasonality<-0
+
 
 
   if(seasonality>0) {
