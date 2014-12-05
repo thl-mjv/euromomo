@@ -168,7 +168,7 @@ addweeks <- function(data){
 #' @param data a data frame in EuroMoMo format
 #' @return a data frame in EuroMoMo format
 #' @export
-zscore <- function(data,type=momoopts("excessvartype")) {
+zscore <- function(data,type=momoopts("DelayVariance")) {
   type<-momomatch(type,c("baseline","both"))
   blvars<-c("pnb","od.cnb","lv.pnb")
   # if we requested something needing baseline and it is not available, issue warnings and go away
@@ -199,7 +199,7 @@ zscore <- function(data,type=momoopts("excessvartype")) {
 #' @param multiplier how many approximate standard deviations to use?
 #' @return a data frame in EuroMoMo format
 #' @export
-excess<-function(data,multiplier=2,type=momoopts("excessvartype")){
+excess<-function(data,multiplier=2,type=momoopts("DelayVariance")){
   type<-momomatch(type,c("baseline","basedelay","delay","both"))
   blvars<-c("pnb","od.cnb","lv.pnb")
   # if we requested something needing baseline and it is not available, issue warnings and go away

@@ -13,3 +13,4 @@ delay.txt
 dev/*.txt
 dev/EUROMOMO-*
 .DS_Store
+.RData
