@@ -12,6 +12,14 @@ library("euromomo")
 #Load surveillance package.
 library("surveillance")
 
+##Small helper function.
+
+nWeeksFromNow <- function(nWeeks) {
+    sort(seq(momoFile$dLastFullWeek,by="-1 week",length.out=nWeeks))
+}
+
+
+
 #Read options using the example data.
 parseDefaultsFile("defaults.txt")
 checkOptions()
@@ -82,12 +90,6 @@ for (i in groups) {
 
     lines(seq_len(length(plotPeriod)),observed(stsAll[whichPlot,]))
   }
-  #Small helper function.
-  nWeeksFromNow <- function(nWeeks) {
-    sort(seq(momoFile$dLastFullWeek,by="-1 week",length.out=nWeeks))
-  }
-
-
 
   #Prior with a large variance
   prior <- structure("poisgamma",mean.lambda=mean(observed(sts)),var.lambda=5*var(observed(sts)))

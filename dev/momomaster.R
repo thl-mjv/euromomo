@@ -32,7 +32,7 @@ groups<-names(getOption("euromomo")[["groups"]])
 results.list<-list()
 
 for (i in groups) {
-  #i<-"Total"
+  #i<-"momodefault5"
   groupOpts <- getOption("euromomo")[["groups"]][[i]]
   cat("Group",groupOpts["label"],"\n")
 
@@ -44,6 +44,9 @@ for (i in groups) {
   rTDF <- rT2DataFrame(rTList$cumRT)
   cat("Group",groupOpts["label"]," reporting triangle\n")
   print(head(rTDF))
+
+  #Show delays for 0,...,(group specific) back as function over time
+  plotDelay(rTDF)
 
   # Delay adjustment
   #drTDF<-delay(rTDF,method="negbin",holiday=holiday.file)
