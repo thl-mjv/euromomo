@@ -37,7 +37,7 @@ for (i in groups) {
   cat("Group",groupOpts["label"],"\n")
 
   groupIndicator <- momo[, paste("group_",i,sep="")]
-  back<-as.numeric(groupOpts["back"])
+  back <- as.numeric(groupOpts["back"])
 
   rTList <- df2ReportingTriangle(momo, groupIndicator, back, dWeeks=momoFile$dWeeks, dLastFullWeek=momoFile$dLastFullWeek) # something about the group
 
@@ -46,7 +46,9 @@ for (i in groups) {
   print(head(rTDF))
 
   #Show delays for 0,...,(group specific) back as function over time
+  #hoehle: ToDo: Store plots in appropriate folders!
   plotDelay(rTDF)
+  plotDelayQuantiles(rTDF, w=1, ISOweeks=rTDF$ISOweek, quantiles=c(0.1,0.5,0.9),lty=1:3,lwd=c(1,4,1))
 
   # Delay adjustment
   #drTDF<-delay(rTDF,method="negbin",holiday=holiday.file)
