@@ -1,13 +1,20 @@
 #' Show the delay as a function of time.
 #'
 #' @param df a data frame representing a reporting triangle.
+#' @param main Title of the plot (typically the label of the agegroup)
 #' @return nothing (NULL)
 #' @export
-plotDelay <- function(df) {
+plotDelay <- function(df, main=NULL) {
   delayIdx <-  grep("^w[0-9]+$",colnames(df))
   maxDelay <- length(delayIdx) - 1
   total <- df[,max(delayIdx)]
-  matplot(1:nrow(df), df[,delayIdx]/matrix(total,nrow=nrow(df),ncol=maxDelay+1,byrow=FALSE),type="l",lty=1,ylab="Proportion of total",xlab="Time",ylim=c(0,1))
+
+  mondays <- ISOweek2date(paste0(df$ISOweek,"-1"))
+  #Matplot doesn't handle dates in the x-axis formatting. Using plot followed matlines
+  plot(mondays,rep(0,length(mondays)),ylab="Proportion of total",xlab="Time of death",ylim=c(0,1),main=main,type="n")
+  matlines(mondays, df[,delayIdx]/matrix(total,nrow=nrow(df),ncol=maxDelay+1,byrow=FALSE),type="l",lty=1)
+  legend(x="bottom", ncol=5, paste0(0:maxDelay," weeks"), lty=1,col=seq_len(maxDelay+1),bg="white")
+
   invisible(NULL)
 }
 
@@ -21,9 +28,10 @@ plotDelay <- function(df) {
 #' @param date - vector of dates where to show the result
 #' @param w - half-width of moving window
 #' @param quantiles - which quantiles to show
+#' @param main - Title of the plot (tpyically the label of the age group)
 #' @return Nothing
 #' @export
-plotDelayQuantiles <- function(rT, w=1, ISOweeks, quantiles=c(0.1,0.5,0.9),col=1,lty=1,lwd=2) {
+plotDelayQuantiles <- function(rT, w=1, ISOweeks, quantiles=c(0.1,0.5,0.9),col=1,lty=1,lwd=2, main=NULL) {
 
   #Ensure correct length of col, lty and lwd by recycling first argument
   if (length(col) != length(quantiles)) { col <- rep(col[1],length(quantiles))}
@@ -62,15 +70,35 @@ plotDelayQuantiles <- function(rT, w=1, ISOweeks, quantiles=c(0.1,0.5,0.9),col=1
 
   #Make a plot (use plot.Dates instead of matplot)
   mondays <- ISOweek2date(paste0(ISOweeks,"-1"))
-  plot(mondays, quants[,1],xlab="Time of death",ylab="Reporting Delay (weeks)",ylim=c(0,maxDelay),type="l",col=col[1],lty=lty[1],lwd=lwd[1])
+  plot(mondays, quants[,1],xlab="Time of death",ylab="Reporting Delay (weeks)",ylim=c(0,maxDelay),type="l",col=col[1],lty=lty[1],lwd=lwd[1],main=main)
   if (length(quantiles)>1) {
     matlines(mondays, quants[,-1],type="l",col=col[-1],lty=lty[-1],lwd=lwd[-1])
   }
 
   #Make a legend
   expressions <- sapply(quantiles, function(quantile) substitute(q[x],list(x=quantile)))
-  legend(x="bottomleft",legend=expressions,lty=lty,col=col,lwd=lwd)
+  legend(x="bottomleft",legend=expressions,lty=lty,col=col,lwd=lwd,bg="white")
 
   #Done
   invisible(NULL)
+}
+
+#' A function combining the plotDelay and plotDelay quantile function
+#'
+#' @param rT Reporting triangle data.frame
+#' @param w Size of the moving window used for smoothing
+#' @param main Title of the graphics (typically the label of the age group)
+#' @param week.dir Directory name where all output is stored.
+#' @export
+plotDelayDiagnostics2File <- function(rT, w=1, main=NULL, week.dir) {
+  #Setup filename and open pdf device (could have been png also)
+  fileName <- paste0("Delay-", groupOpts["label"], ".pdf")
+  pdf(file = file.path(week.dir, "Diagnostics", fileName), onefile=TRUE, width=8,height=6)
+
+  #Call the two plot routines.
+  plotDelay(rT, main=main)
+  plotDelayQuantiles(rTDF, w=1, ISOweeks=rTDF$ISOweek, quantiles=c(0.1,0.5,0.9),lty=c(3,1,4),lwd=c(1,4,1),main=main)
+
+  #Close device
+  dev.off()
 }

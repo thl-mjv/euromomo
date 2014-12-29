@@ -46,9 +46,7 @@ for (i in groups) {
   print(head(rTDF))
 
   #Show delays for 0,...,(group specific) back as function over time
-  #hoehle: ToDo: Store plots in appropriate folders!
-  plotDelay(rTDF)
-  plotDelayQuantiles(rTDF, w=1, ISOweeks=rTDF$ISOweek, quantiles=c(0.1,0.5,0.9),lty=1:3,lwd=c(1,4,1))
+  plotDelayDiagnostics2File(rT=rTDF, w=1, main=groupOpts["label"], week.dir=week.dir)
 
   # Delay adjustment
   #drTDF<-delay(rTDF,method="negbin",holiday=holiday.file)

@@ -3,10 +3,12 @@
 \alias{plotDelay}
 \title{Show the delay as a function of time.}
 \usage{
-plotDelay(df)
+plotDelay(df, main = NULL)
 }
 \arguments{
 \item{df}{a data frame representing a reporting triangle.}
+
+\item{main}{Title of the plot (typically the label of the agegroup)}
 }
 \value{
 nothing (NULL)
