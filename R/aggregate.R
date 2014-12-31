@@ -69,16 +69,5 @@ rT2DataFrame <- function(rT) {
   return(df)
 }
 
-#' Show the delay as a function of time.
-#'
-#' @param df a data frame
-#' @return nothing
-#' @export
-plotDelay <- function(df) {
-  delayIdx <-  grep("^w[0-9]+$",colnames(df))
-  maxDelay <- length(delayIdx) - 1
-  total <- df[,max(delayIdx)]
-  matplot(1:nrow(df), df[,delayIdx]/matrix(total,nrow=nrow(df),ncol=maxDelay+1,byrow=FALSE),type="l",lty=1,ylab="Proportion of total",xlab="Time",ylim=c(0,1))
-  invisible(NULL)
-}
+
 
