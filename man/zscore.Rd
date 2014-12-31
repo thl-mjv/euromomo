@@ -3,7 +3,7 @@
 \alias{zscore}
 \title{Append zscores to the EuroMoMo data}
 \usage{
-zscore(data, type = momoopts("excessvartype"))
+zscore(data, type = momoopts("DelayVariance"))
 }
 \arguments{
 \item{data}{a data frame in EuroMoMo format}
