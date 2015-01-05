@@ -1,3 +1,19 @@
+#' Draw vertical line indicating start of the delay estimation.
+#'
+#' This internal helper function draws a vertical line and adds an axis label
+#' at the top of the graph.
+#'
+#' @param mondays Vector of dates indicating the mondays of the ISOweeks.
+#'
+verticalLineSDE <- function(mondays) {
+  dStart <- ISOweek2date(paste0(options("euromomo")$euromomo$StartDelayEst,"-1"))
+  if (dStart %in% mondays) {
+    idx <- which(mondays == dStart)
+    lines( rep(mondays[idx],2), c(0,1e99),lwd=2,lty=2)
+    axis(3, at=mondays[idx], label="StartDelayEst",cex.axis=0.7,lwd=2,las=1)
+  }
+}
+
 #' Show the delay as a function of time.
 #'
 #' @param df a data frame representing a reporting triangle.
@@ -13,6 +29,7 @@ plotDelay <- function(df, main=NULL) {
   #Matplot doesn't handle dates in the x-axis formatting. Using plot followed matlines
   plot(mondays,rep(0,length(mondays)),ylab="Proportion of total",xlab="Time of death",ylim=c(0,1),main=main,type="n")
   matlines(mondays, df[,delayIdx]/matrix(total,nrow=nrow(df),ncol=maxDelay+1,byrow=FALSE),type="l",lty=1)
+  verticalLineSDE(mondays)
   legend(x="bottom", ncol=5, paste0(0:maxDelay," weeks"), lty=1,col=seq_len(maxDelay+1),bg="white")
 
   invisible(NULL)
@@ -71,9 +88,19 @@ plotDelayQuantiles <- function(rT, w=1, ISOweeks, quantiles=c(0.1,0.5,0.9),col=1
   #Make a plot (use plot.Dates instead of matplot)
   mondays <- ISOweek2date(paste0(ISOweeks,"-1"))
   plot(mondays, quants[,1],xlab="Time of death",ylab="Reporting Delay (weeks)",ylim=c(0,maxDelay),type="l",col=col[1],lty=lty[1],lwd=lwd[1],main=main)
+  #Add grid for easier reading.
+  grid(ny=NULL,nx=NA,lwd=2)
+  #void <- sapply(seq(0,maxDelay,by=2), function(i) {
+  #  abline(a=i,b=0,col="lightgray",lty=2)
+  #})
+  axis(2,at=0:maxDelay,labels=FALSE,tcl=-0.25)
+  #Add additional lines.
   if (length(quantiles)>1) {
     matlines(mondays, quants[,-1],type="l",col=col[-1],lty=lty[-1],lwd=lwd[-1])
   }
+  #Draw vertical line indicating start of delay estimation.
+  verticalLineSDE(mondays)
+
 
   #Make a legend
   expressions <- lapply(quantiles, function(quantile) substitute(expression(q[x]),list(x=quantile)))

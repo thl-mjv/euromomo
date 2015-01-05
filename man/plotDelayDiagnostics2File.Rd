@@ -3,12 +3,15 @@
 \alias{plotDelayDiagnostics2File}
 \title{A function combining the plotDelay and plotDelay quantile function}
 \usage{
-plotDelayDiagnostics2File(rT, w = 1, main = NULL, week.dir)
+plotDelayDiagnostics2File(rTList, w = 1, quantiles = c(0.25, 0.5, 0.75, 0.9,
+  0.95, 0.99), main = NULL, week.dir)
 }
 \arguments{
-\item{rT}{Reporting triangle data.frame}
+\item{rTList}{List containing different versions of the reporting triangle data.frame}
 
 \item{w}{Size of the moving window used for smoothing}
+
+\item{quantiles}{Vector containing the quantiles to show in the 2nd plot of the delay distribution.}
 
 \item{main}{Title of the graphics (typically the label of the age group)}
 
