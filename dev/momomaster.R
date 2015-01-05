@@ -48,7 +48,7 @@ for (i in groups) {
   rTList.diagnostic <- df2ReportingTriangle(momo, groupIndicator, backDiagnostic, dWeeks=momoFile$dWeeks, dLastFullWeek=momoFile$dLastFullWeek)
 
   #Show delays for 0,...,(group specific) back as function over time
-  plotDelayDiagnostics2File(rT=rTList.diagnostic, w=1, quantile=c(0.25,0.50,0.75,0.9,0.95,0.99),
+  plotDelayDiagnostics2File(rTList=rTList.diagnostic, w=1, quantile=c(0.25,0.50,0.75,0.9,0.95,0.99),
                             main=groupOpts["label"], week.dir=week.dir)
 
   #Extract cumulative version from list and show

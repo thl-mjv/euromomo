@@ -98,7 +98,8 @@ plotDelayDiagnostics2File <- function(rTList, w=1, quantiles=c(0.25,0.50,0.75,0.
 
   #Call the two plot routines.-
   plotDelay(rT2DataFrame(rTList$cumRT), main=main)
-  plotDelayQuantiles(rT2DataFrame(rTList$rT), w=w, ISOweeks=rTDF$ISOweek,
+  rTDF <- rT2DataFrame(rTList$rT)
+  plotDelayQuantiles(rTDF, w=w, ISOweeks=rTDF$ISOweek,
                      quantiles=quantiles,
                      lty=seq_len(length(quantiles)),
                      lwd=(seq_len(length(quantiles))+1) %/% 2,
