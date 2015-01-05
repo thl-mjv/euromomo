@@ -50,6 +50,7 @@ df2ReportingTriangle <- function(momo, groupindicator, back, dWeeks, dLastFullWe
   }
   #Cumulated reporting triangle
   cumRT <- t(apply(rT, MARGIN=1, cumsum))
+  rT <- t(apply(rT,MARGIN=1, function(x) x))
 
   cat("Tabulated a total of ",sum(rT,na.rm=TRUE),"observations in the reporting triangle.\n")
   #Done

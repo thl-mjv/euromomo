@@ -118,18 +118,13 @@ checkOptions <- function() {
     stop("The following variable names are missing: ",importantVarNames[idxMissing],"\n.")
   }
 
-#   # Check that DayOfAggregation is given, otherwise replace with today's date
-#   if(is.null(opts$DayOfAggregation)){
-#     opts$DayOfAggregation <- Sys.Date()
-#     warning(paste("DayOfAggregation was not given. SystemDate (", Sys.Date(), ") was used instead.\n", sep=""))
-#   }
   # Check if DayOfAggregation is valid.
   if(as.Date(opts$DayOfAggregation)>Sys.Date()){
     stop("Invalid DayOfAggregation given.\n")
   }
 
   #Check that if there are ISO weeks of except that these are valid.
-  if (length(opts[["except"]] > 0)) {
+  if (length(opts[["except"]])>0) {
     dStart <- ISOweek::ISOweek2date(paste(opts$except[,1],"-1",sep=""))
     dEnd <- ISOweek::ISOweek2date(paste(opts$except[,2],"-1",sep=""))
     if (any(dStart > dEnd)) {
@@ -140,6 +135,7 @@ checkOptions <- function() {
 
   #Check that each group has at least the two necessary attributes
   groups <- opts[["groups"]]
+
   for (i in 1:length(groups)) {
     #Check that the important attributes are there.
     importantAttr <- c("definition","label", "back")
@@ -147,6 +143,8 @@ checkOptions <- function() {
     if (!all(attrThere)) {
       stop(paste("Group \"",names(groups)[i],"\" is missing the attribute \"",importantAttr[!attrThere],"\"",sep=""))
     }
+
+
     #Convert booleans
     booleanAttributes <- c("seasonality","trend")
     for (attr in booleanAttributes) {
