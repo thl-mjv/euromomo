@@ -74,6 +74,15 @@ parseDefaultsFile <- function(fileName, debug=FALSE) {
     }
   }
 
+  # Check that the StartDelayEst variable is valid
+  if (grepl("^[0-9]{4}-W[0-9]{2}$",out$StartDelayEst)) {
+    tryCatch(ISOweek2date(paste0(out$StartDelayEst,"-1")),error=function(e) {
+      stop("StartDelayEst=",out$StartDelayEst," is not a valid ISO week specification (YYYY-WXX):\n",e)
+    })
+  } else {
+    stop("StartDelayEst=",out$StartDelayEst," is not a valid ISO week specification (YYYY-WXX).")
+  }
+
   # Check that DayOfAggregation is given, otherwise replace with today's date
   if(is.null(out$DayOfAggregation)){
     out$DayOfAggregation <- Sys.Date()
