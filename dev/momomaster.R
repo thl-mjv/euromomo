@@ -39,14 +39,22 @@ for (i in groups) {
   groupIndicator <- momo[, paste("group_",i,sep="")]
   back <- as.numeric(groupOpts["back"])
 
+  #Generate reporting triangle
   rTList <- df2ReportingTriangle(momo, groupIndicator, back, dWeeks=momoFile$dWeeks, dLastFullWeek=momoFile$dLastFullWeek) # something about the group
 
-  rTDF <- rT2DataFrame(rTList$cumRT)
-  cat("Group",groupOpts["label"]," reporting triangle\n")
-  print(head(rTDF))
+  #Compute diagnostics by illustrating the reporting triangle
+  #using larger delays than the requested, say 3*back.
+  backDiagnostic <- 3*back
+  rTList.diagnostic <- df2ReportingTriangle(momo, groupIndicator, backDiagnostic, dWeeks=momoFile$dWeeks, dLastFullWeek=momoFile$dLastFullWeek)
 
   #Show delays for 0,...,(group specific) back as function over time
-  plotDelayDiagnostics2File(rT=rTDF, w=1, main=groupOpts["label"], week.dir=week.dir)
+  plotDelayDiagnostics2File(rTList=rTList.diagnostic, w=1, quantile=c(0.25,0.50,0.75,0.9,0.95,0.99),
+                            main=groupOpts["label"], week.dir=week.dir)
+
+  #Extract cumulative version from list and show
+  rTDF <- rT2DataFrame(rTList$cumRT)
+  cat("Group",groupOpts["label"]," reporting triangle (cumulative):\n")
+  print(head(rTDF))
 
   # Delay adjustment
   #drTDF<-delay(rTDF,method="negbin",holiday=holiday.file)

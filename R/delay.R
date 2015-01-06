@@ -36,7 +36,7 @@ delay <- function(data,
 }
 #' Delay correction, Poisson version
 #'
-#' @param rTDF source data from aggregation
+#' @param rTDF source data from aggregation (reporting triangle in cumulated form)
 #' @param method either "poisson" or "negbin"
 #' @param opentype which type of effect for the "open"?
 #' @param openvar which version of the variable "open" to user=

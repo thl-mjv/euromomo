@@ -12,13 +12,13 @@ library("euromomo")
 #Load surveillance package.
 library("surveillance")
 
-##Small helper function.
-
+#Small helper function to take the global momoFile$dLastFullWeek
+#and take nWeeks back.
 nWeeksFromNow <- function(nWeeks) {
     sort(seq(momoFile$dLastFullWeek,by="-1 week",length.out=nWeeks))
 }
-
-
+#Small helper function to concatenate the last element of a vector on the vector
+repLast <- function(x) { c(x,x[length(x)])}
 
 #Read options using the example data.
 parseDefaultsFile("defaults.txt")
@@ -60,22 +60,18 @@ for (i in groups) {
   groupLabel <- groupOpts["label"]
   cat("Group",groupOpts["label"],"\n")
 
-  groupIndicator <- momo[, paste("group_",i,sep="")]
   back<-as.numeric(groupOpts["back"])
-  momoGroup <- subset(momo,groupIndicator)
-  momoGroupAll <- subset(momoAll,groupIndicator)
+  groupIndicator <- momo[, paste0("group_",i)]
+  momoGroup <- momo[groupIndicator,]
+  momoGroupAll <- momoAll[momoAll[,paste0("group_",i)],]
 
   #Get reporting triangle
   rTList <- df2ReportingTriangle(momo, groupIndicator, back, dWeeks=momoFile$dWeeks, dLastFullWeek=momoFile$dLastFullWeek) # something about the group
   rTDF <- rT2DataFrame(rTList$cumRT)
 
   #Make sts object with the same information.
-  #Problem: sts and stsAll do not agree, even on observations far back
-  #in time. WHY?
-  sts <- linelist2sts( momoGroup, dateCol="DoD", aggregate.by="1 week",
-                       dRange=momoFile$dWeeks)
-  stsAll <- linelist2sts( momoGroupAll, dateCol="DoD", aggregate.by="1 week",
-                       dRange=momoFileAll$dWeeks)
+  sts <- linelist2sts( momoGroup, dateCol="DoD", aggregate.by="1 week",dRange=momoFile$dWeeks)
+  stsAll <- linelist2sts( momoGroupAll, dateCol="DoD", aggregate.by="1 week",dRange=momoFileAll$dWeeks)
 
   #Can plot it, if we want to.
   plotPeriod <- nWeeksFromNow(10)
@@ -84,11 +80,14 @@ for (i in groups) {
   if (FALSE) {
     #Show data as weekly data. To understand the plotting symbols check strptime and
     plot(sts[whichPlot,],xaxis.tickFreq=list("%m"=atChange,"%Y"=atChange),
-         xaxis.labelFreq=list("%G"=atChange),
+         xaxis.labelFreq=list("%V"=atChange),
          xaxis.labelFormat="%G-W%V",legend.opts=NULL,
-         xlab="",las=1,cex.axis=0.8,main=groupLabel, )
-
-    lines(seq_len(length(plotPeriod)),observed(stsAll[whichPlot,]))
+         xlab="",las=1,cex.axis=0.8,main=groupLabel,
+         ylim=c(0,max(observed(sts[whichPlot,]),observed(stsAll[whichPlot,]))),
+         lwd=1)
+    lines(seq_len(sum(whichPlot)+1)-0.5,repLast(observed(stsAll[whichPlot,])),type="s",lwd=3,col="darkgreen")
+    legend(x="topright",legend=paste0("DoA=",
+                                      c(options("euromomo")$euromomo$DayOfAggregation,as.character(optsAll[["DayOfAggregation"]]))),lwd=c(1,3),col=c("black","darkgreen"))
   }
 
   #Prior with a large variance
@@ -116,21 +115,21 @@ for (i in groups) {
        col=c(NA,"gray","blue"),lty=c(1,1,1,1),lwd=c(1,1,3),legend.opts=NULL,
        main=groupLabel, ylim=c(0,max(observed(stsAll[whichPlot,]),nc@pi,na.rm=TRUE)))
 
+  #Show truth also
+  idx <- which( epoch(stsAll) %in% epoch(nc))
+  lines(seq_len(length(idx)+1)-0.5,repLast(observed(stsAll[idx,])),col="magenta",lwd=3,type="s")
+
   # Which index to show of drTDF
   idxShow <- which(drTDF$ISOweek %in% ISOweek(plotPeriod))
   lines(seq_len(length(idxShow)), drTDF[idxShow,"cnb"],lwd=3,type="b")
 
   lines(seq_len(length(idxShow)), drTDF[idxShow,"cnb"] - 1.96*sqrt(drTDF[idxShow,"v.cnb"]),lwd=1,lty=2)
   lines(seq_len(length(idxShow)), drTDF[idxShow,"cnb"] + 1.96*sqrt(drTDF[idxShow,"v.cnb"]),lwd=1,lty=2)
-
-
-  #Add the truth as well
-  #lines(seq_len(length(idxShow))-0.5, observed(stsAll[whichPlot,]),lwd=3,type="s",col="magenta")
 }
 
 plot(c(0,0),type="n",axes=FALSE,xlab="",ylab="")
-legend(x="center",c("bayes.trunc","delay.nb"),col=c("blue","black"),lwd=3,bg="white",lty=c(1,1))
-#legend(x="center",c("bayes.trunc","delay.nb","truth"),col=c("blue","black","magenta"),lwd=3,bg="white",lty=c(1,1,1))
+#legend(x="center",c("bayes.trunc","delay.nb"),col=c("blue","black"),lwd=3,bg="white",lty=c(1,1))
+legend(x="center",c("bayes.trunc","delay.nb","truth"),col=c("blue","black","magenta"),lwd=3,bg="white",lty=c(1,1,1))
 
 #Close graphics device.
 dev.off()

@@ -42,9 +42,13 @@ readmomofile <- function(dateFormat="%Y-%m-%d") {
 
   #Some quality control of the delay slot
   negativeDelay <- momo$Delay < 0
-  if (sum(negativeDelay) > 0) {
+  if (sum(negativeDelay, na.rm=TRUE) > 0) {
     warning("No. of observations with a negative delay: ",sum(negativeDelay),". These observations are removed.\n")
     momo <- subset(momo, !negativeDelay)
+  }
+  if (sum(is.na(momo$Delay)) > 0) {
+    warning("No. of observations with delay equal to NA: ",sum(is.na(momo$Delay)),". These observations are removed.\n")
+    momo <- subset(momo, !is.na(momo$Delay))
   }
 
   #Monday of last full week before DayOfAggregation (equal to DayOfAggregation if its a Sunday)

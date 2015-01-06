@@ -8,7 +8,7 @@ delay.poisson(rTDF, method = c("poisson", "negbin"), opentype = c("offset",
   delaytype = c("factor", "numeric", "none"), holiday)
 }
 \arguments{
-\item{rTDF}{source data from aggregation}
+\item{rTDF}{source data from aggregation (reporting triangle in cumulated form)}
 
 \item{method}{either "poisson" or "negbin"}
 

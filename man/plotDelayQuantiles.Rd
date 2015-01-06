@@ -7,7 +7,7 @@ plotDelayQuantiles(rT, w = 1, ISOweeks, quantiles = c(0.1, 0.5, 0.9),
   col = 1, lty = 1, lwd = 2, main = NULL)
 }
 \arguments{
-\item{rT}{- reporting triangle as it would be at the end}
+\item{rT}{- reporting triangle as it would be at the end.}
 
 \item{w}{- half-width of moving window}
 

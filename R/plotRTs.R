@@ -1,3 +1,19 @@
+#' Draw vertical line indicating start of the delay estimation.
+#'
+#' This internal helper function draws a vertical line and adds an axis label
+#' at the top of the graph.
+#'
+#' @param mondays Vector of dates indicating the mondays of the ISOweeks.
+#'
+verticalLineSDE <- function(mondays) {
+  dStart <- ISOweek2date(paste0(options("euromomo")$euromomo$StartDelayEst,"-1"))
+  if (dStart %in% mondays) {
+    idx <- which(mondays == dStart)
+    lines( rep(mondays[idx],2), c(0,1e99),lwd=2,lty=2)
+    axis(3, at=mondays[idx], label="StartDelayEst",cex.axis=0.7,lwd=2,las=1)
+  }
+}
+
 #' Show the delay as a function of time.
 #'
 #' @param df a data frame representing a reporting triangle.
@@ -13,6 +29,7 @@ plotDelay <- function(df, main=NULL) {
   #Matplot doesn't handle dates in the x-axis formatting. Using plot followed matlines
   plot(mondays,rep(0,length(mondays)),ylab="Proportion of total",xlab="Time of death",ylim=c(0,1),main=main,type="n")
   matlines(mondays, df[,delayIdx]/matrix(total,nrow=nrow(df),ncol=maxDelay+1,byrow=FALSE),type="l",lty=1)
+  verticalLineSDE(mondays)
   legend(x="bottom", ncol=5, paste0(0:maxDelay," weeks"), lty=1,col=seq_len(maxDelay+1),bg="white")
 
   invisible(NULL)
@@ -24,7 +41,7 @@ plotDelay <- function(df, main=NULL) {
 #' Show empirical and model based median of delay distribution as a
 #' function of occurence time t.
 #'
-#' @param rT - reporting triangle as it would be at the end
+#' @param rT - reporting triangle as it would be at the end.
 #' @param date - vector of dates where to show the result
 #' @param w - half-width of moving window
 #' @param quantiles - which quantiles to show
@@ -71,13 +88,23 @@ plotDelayQuantiles <- function(rT, w=1, ISOweeks, quantiles=c(0.1,0.5,0.9),col=1
   #Make a plot (use plot.Dates instead of matplot)
   mondays <- ISOweek2date(paste0(ISOweeks,"-1"))
   plot(mondays, quants[,1],xlab="Time of death",ylab="Reporting Delay (weeks)",ylim=c(0,maxDelay),type="l",col=col[1],lty=lty[1],lwd=lwd[1],main=main)
+  #Add grid for easier reading.
+  grid(ny=NULL,nx=NA,lwd=2)
+  #void <- sapply(seq(0,maxDelay,by=2), function(i) {
+  #  abline(a=i,b=0,col="lightgray",lty=2)
+  #})
+  axis(2,at=0:maxDelay,labels=FALSE,tcl=-0.25)
+  #Add additional lines.
   if (length(quantiles)>1) {
     matlines(mondays, quants[,-1],type="l",col=col[-1],lty=lty[-1],lwd=lwd[-1])
   }
+  #Draw vertical line indicating start of delay estimation.
+  verticalLineSDE(mondays)
+
 
   #Make a legend
-  expressions <- sapply(quantiles, function(quantile) substitute(q[x],list(x=quantile)))
-  legend(x="bottomleft",legend=expressions,lty=lty,col=col,lwd=lwd,bg="white")
+  expressions <- lapply(quantiles, function(quantile) substitute(expression(q[x]),list(x=quantile)))
+  legend(x="bottomleft",legend=sapply(expressions,eval),lty=lty,col=col,lwd=lwd,bg="white")
 
   #Done
   invisible(NULL)
@@ -85,19 +112,25 @@ plotDelayQuantiles <- function(rT, w=1, ISOweeks, quantiles=c(0.1,0.5,0.9),col=1
 
 #' A function combining the plotDelay and plotDelay quantile function
 #'
-#' @param rT Reporting triangle data.frame
+#' @param rTList List containing different versions of the reporting triangle data.frame
 #' @param w Size of the moving window used for smoothing
+#' @param quantiles Vector containing the quantiles to show in the 2nd plot of the delay distribution.
 #' @param main Title of the graphics (typically the label of the age group)
 #' @param week.dir Directory name where all output is stored.
 #' @export
-plotDelayDiagnostics2File <- function(rT, w=1, main=NULL, week.dir) {
+plotDelayDiagnostics2File <- function(rTList, w=1, quantiles=c(0.25,0.50,0.75,0.9,0.95,0.99), main=NULL, week.dir) {
   #Setup filename and open pdf device (could have been png also)
   fileName <- paste0("Delay-", groupOpts["label"], ".pdf")
   pdf(file = file.path(week.dir, "Diagnostics", fileName), onefile=TRUE, width=8,height=6)
 
-  #Call the two plot routines.
-  plotDelay(rT, main=main)
-  plotDelayQuantiles(rTDF, w=1, ISOweeks=rTDF$ISOweek, quantiles=c(0.1,0.5,0.9),lty=c(3,1,4),lwd=c(1,4,1),main=main)
+  #Call the two plot routines.-
+  plotDelay(rT2DataFrame(rTList$cumRT), main=main)
+  rTDF <- rT2DataFrame(rTList$rT)
+  plotDelayQuantiles(rTDF, w=w, ISOweeks=rTDF$ISOweek,
+                     quantiles=quantiles,
+                     lty=seq_len(length(quantiles)),
+                     lwd=(seq_len(length(quantiles))+1) %/% 2,
+                     col=seq_len(length(quantiles)),main=main)
 
   #Close device
   dev.off()
