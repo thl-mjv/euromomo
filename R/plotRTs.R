@@ -121,7 +121,7 @@ plotDelayQuantiles <- function(rT, w=1, ISOweeks, quantiles=c(0.1,0.5,0.9),col=1
 plotDelayDiagnostics2File <- function(rTList, w=1, quantiles=c(0.25,0.50,0.75,0.9,0.95,0.99), main=NULL, week.dir) {
   #Setup filename and open pdf device (could have been png also)
   fileName <- paste0("Delay-", groupOpts["label"], ".pdf")
-  pdf(file = file.path(week.dir, "Diagnostics", fileName), onefile=TRUE, width=8,height=6)
+  pdf(file = file.path(week.dir, "diagnostics", fileName), onefile=TRUE, width=8,height=6)
 
   #Call the two plot routines.-
   plotDelay(rT2DataFrame(rTList$cumRT), main=main)
