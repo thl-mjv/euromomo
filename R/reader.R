@@ -61,7 +61,7 @@ readmomofile <- function(dateFormat="%Y-%m-%d") {
   #All observations arriving after DayOfAggregation need to be removed.
   #Actually, its not DayOfAggregation, but those with a DoR which is
   #in the last full week before DayOfAggregation
-  cat("Removing ",sum(momo$DoRMon > dLastFullWeek)," observations reported after DayOfAggregation=",as.character(euromomoCntrl$DayOfAggregation),".\n")
+  cat("Removing ",sum(momo$DoRMon > dLastFullWeek)," observations reported after DayOfAggregation=",as.character(euromomoCntrl$DayOfAggregation)," (i.e. DoRMon > (dLastFullWeek=",as.character(dLastFullWeek),")).\n")
   momo <- subset(momo, momo$DoRMon <= dLastFullWeek)
 
   #This should be a parameter somewhere and needs to be synced with EuroMomo
