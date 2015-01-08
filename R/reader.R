@@ -89,7 +89,7 @@ readmomofile <- function(dateFormat="%Y-%m-%d") {
   #Subset data to be only observations with DoD
   dWeeks <- seq(dStart, dLastFullWeek, by="1 week")
   insideWeeks <- (momo$DoDMon >= dStart) & (momo$DoDMon <= dLastFullWeek)
-  cat("Removing",sum(!insideWeeks), "observations not within", paste(dStart,"-",dLastFullWeek),".\n")
+  cat("Removing",sum(!insideWeeks), "observations with DoDMon not within", paste(dStart,"-",dLastFullWeek)," (i.e. not within",paste0(ISOweek::ISOweek(c(dStart,dLastFullWeek)),collapse=" - "),").\n")
   momo <- subset(momo, insideWeeks)
 
 
