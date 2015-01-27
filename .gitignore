@@ -9,7 +9,6 @@
 .Rproj.user
 delay.txt
 *.Rout
-*.png
 dev/*.txt
 dev/EUROMOMO-*
 .DS_Store
