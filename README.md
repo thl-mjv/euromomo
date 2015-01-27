@@ -21,4 +21,4 @@ Using
 Developing
 ==========
 
-See [developing guidelines](Documents/Developing)
+See [developing guidelines](Documents/Developing.md)
