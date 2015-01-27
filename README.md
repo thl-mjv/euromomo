@@ -9,7 +9,7 @@ Installing
 If you just want to install the file, use
 
     library("devtools") # make sure you have this package installed first
-    install_github(username="thl-mjv",repo="euromomo")
+    install_github("thl-mjv/euromomo")
     
 Using 
 =====
