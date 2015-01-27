@@ -12,7 +12,7 @@ ISOwoy(x)
 Vector of numeric each being between 00-53.
 }
 \description{
-Function to extract the week of the year (WOY) as decimal number (00–53)
+Function to extract the week of the year (WOY) as decimal number (00-53)
 (i.e. not the year, just the number) from an ISOweek::ISOweek generated date.
 Example: For 2013-W13 this would be 13.
 }
