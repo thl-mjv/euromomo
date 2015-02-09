@@ -7,6 +7,8 @@ zscore(data, type = momoopts("DelayVariance"))
 }
 \arguments{
 \item{data}{a data frame in EuroMoMo format}
+
+\item{type}{Which type to append ('baseline' or 'both')}
 }
 \value{
 a data frame in EuroMoMo format

@@ -10,7 +10,7 @@ verticalLineSDE <- function(mondays) {
   if (dStart %in% mondays) {
     idx <- which(mondays == dStart)
     lines( rep(mondays[idx],2), c(0,1e99),lwd=2,lty=2)
-    axis(3, at=mondays[idx], label="StartDelayEst",cex.axis=0.7,lwd=2,las=1)
+    axis(3, at=mondays[idx], labels="StartDelayEst",cex.axis=0.7,lwd=2,las=1)
   }
 }
 
@@ -42,9 +42,12 @@ plotDelay <- function(df, main=NULL) {
 #' function of occurence time t.
 #'
 #' @param rT - reporting triangle as it would be at the end.
-#' @param date - vector of dates where to show the result
 #' @param w - half-width of moving window
+#' @param ISOweeks Vector of ISO week dates where to show the result
 #' @param quantiles - which quantiles to show
+#' @param col Color of the quantiles, see \code{\link{plot}}.
+#' @param lty Line types, see \code{\link{plot}}.
+#' @param lwd Line width, see \code{\link{plot}}.
 #' @param main - Title of the plot (tpyically the label of the age group)
 #' @return Nothing
 #' @export

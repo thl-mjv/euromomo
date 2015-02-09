@@ -9,6 +9,8 @@ excess(data, multiplier = 2, type = momoopts("DelayVariance"))
 \item{data}{a data frame in EuroMoMo format}
 
 \item{multiplier}{how many approximate standard deviations to use?}
+
+\item{type}{Which type to append ('baseline', 'basedelay', 'delay' or 'both') or 'both')}
 }
 \value{
 a data frame in EuroMoMo format
