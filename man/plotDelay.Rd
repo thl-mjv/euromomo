@@ -6,7 +6,7 @@
 plotDelay(df, main = NULL)
 }
 \arguments{
-\item{df}{a data frame representing a reporting triangle.}
+\item{df}{a data frame representing a reporting triangle (Note: it's cumulative).}
 
 \item{main}{Title of the plot (typically the label of the agegroup)}
 }
