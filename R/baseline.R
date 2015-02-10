@@ -27,7 +27,7 @@
 #' @param ... Extra parameters for glm
 #' @return EuroMOMO data with predicted values, prediction variances and overdispersion
 #' @export
-baseline <- function(data, groupOptions,seasonality =1, trend=1,...){
+baseline <- function(data, groupOptions,seasonality=1, trend=1, ...){
   # STEP 1: Calculate the trend (ISOweek) as continuous)
   if(missing(trend)) # not give in call
     trend<-groupOptions["trend"]
@@ -174,6 +174,7 @@ addweeks <- function(data){
 #' Append zscores to the EuroMoMo data
 #'
 #' @param data a data frame in EuroMoMo format
+#' @param type Which type to append ('baseline' or 'both')
 #' @return a data frame in EuroMoMo format
 #' @export
 zscore <- function(data,type=momoopts("DelayVariance")) {
@@ -205,6 +206,7 @@ zscore <- function(data,type=momoopts("DelayVariance")) {
 #'
 #' @param data a data frame in EuroMoMo format
 #' @param multiplier how many approximate standard deviations to use?
+#' @param type Which type to append ('baseline', 'basedelay', 'delay' or 'both') or 'both')
 #' @return a data frame in EuroMoMo format
 #' @export
 excess<-function(data,multiplier=2,type=momoopts("DelayVariance")){

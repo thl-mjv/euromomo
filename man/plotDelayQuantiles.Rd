@@ -11,11 +11,17 @@ plotDelayQuantiles(rT, w = 1, ISOweeks, quantiles = c(0.1, 0.5, 0.9),
 
 \item{w}{- half-width of moving window}
 
+\item{ISOweeks}{Vector of ISO week dates where to show the result}
+
 \item{quantiles}{- which quantiles to show}
 
-\item{main}{- Title of the plot (tpyically the label of the age group)}
+\item{col}{Color of the quantiles, see \code{\link{plot}}.}
 
-\item{date}{- vector of dates where to show the result}
+\item{lty}{Line types, see \code{\link{plot}}.}
+
+\item{lwd}{Line width, see \code{\link{plot}}.}
+
+\item{main}{- Title of the plot (tpyically the label of the age group)}
 }
 \value{
 Nothing
