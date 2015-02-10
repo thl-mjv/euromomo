@@ -42,7 +42,7 @@ ISOseasonStart <- function(x){
   season <- ifelse(ISOwoy(x) >= 40 | ISOwoy(x) <= 20, "Winter", "Summer")
 
   Year.season <- ifelse(season=="Summer", paste(ISOyear(x), "-W20", sep=""),
-                        ifelse(ISOwoy(x)<20, paste((ISOyear(x)-1), "-W40", sep=""),
+                        ifelse(ISOwoy(x)<=20, paste((ISOyear(x)-1), "-W40", sep=""),
                                paste(ISOyear(x), "-W40", sep="")))
 
   return(Year.season)

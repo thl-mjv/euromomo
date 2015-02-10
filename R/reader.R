@@ -64,28 +64,31 @@ readmomofile <- function(dateFormat="%Y-%m-%d") {
   cat("Removing ",sum(momo$DoRMon > dLastFullWeek)," observations reported after DayOfAggregation=",as.character(euromomoCntrl$DayOfAggregation)," (i.e. DoRMon > (dLastFullWeek=",as.character(dLastFullWeek),")).\n")
   momo <- subset(momo, momo$DoRMon <= dLastFullWeek)
 
-  #This should be a parameter somewhere and needs to be synced with EuroMomo
-  #parameter file. For now: Go back 5 years and then to closest monday more
-  #than 5 years ago.
-  #dStart <- seq(dLastFullWeek,length=2,by="-6 years")[-1]
-#   momo$YoDi<-as.numeric(substring(as.character(momo$YWoDi),7))
-
-#   momo$YoDi <- ISOyear(momo$YWoDi)
-#   momo$WoDi <- ISOwoy(momo$YWoDi)
-
-
+  # What is the start of the season of the last full week (i.e. last week we have full set of delay==0 observations)
   ISOSeason <- ISOseasonStart(ISOweek(dLastFullWeek))
+  # what is the maximum length of observation
+  backs<-sapply(euromomoCntrl$groups,function(a) as.numeric(a["back"]))
+  #print(backs)
+  back<-max(backs)
+  # what is the start of the season for the last complete week (i.e. last week we have all observations)
+  ISOFSeason<-ISOseasonStart(ISOweek(dLastFullWeek-7*back))
+  # what is the start of the last season we have observed fully
+  ISOCSeason<-ISOseasonStart(ISOweek(ISOweek2date(paste(ISOFSeason,"-1",sep=""))-1))
 
-  dStart <- paste(ISOyear(ISOSeason) - as.numeric(euromomoCntrl$BaselineSeasons), "-W", ISOwoy(ISOSeason), "-1", sep="")
+  cat("Current season:",ISOSeason,"\nSeason of last complete week:",ISOFSeason,"\nLast Full season:",ISOCSeason,"\n",sep="")
+
+  # Start is at the start of season BaselineSeasons ago
+  dStart <- paste(ISOyear(ISOCSeason) - as.numeric(euromomoCntrl$BaselineSeasons), "-W", ISOwoy(ISOCSeason), "-1", sep="")
   dStart <- ISOweek2date(dStart)
 
+  # First week with any observations
   firstWeekInData <- min(momo$DoDMon) - (ISOweek::ISOweekday(min(momo$DoDMon)) - 1)
-#   dStart <- firstWeekInData
-#   dStart <- dStart - (ISOweek::ISOweekday(dStart) - 1)
-  #browser()
+
+  # Check
   if (firstWeekInData > dStart) {
     stop("Data don't go back as far as requested.")
   }
+  
   #Subset data to be only observations with DoD
   dWeeks <- seq(dStart, dLastFullWeek, by="1 week")
   insideWeeks <- (momo$DoDMon >= dStart) & (momo$DoDMon <= dLastFullWeek)
