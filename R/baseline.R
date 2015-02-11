@@ -24,10 +24,11 @@
 #' @param groupOptions vector of group specific options
 #' @param seasonality number of seasonality components (0 or 1) (overrides groupOptions, if given)
 #' @param trend include a linear trend (0 or 1) (overrides groupOptions, if given)
+#' @param clean if TRUE (default), the technical variables used in fitting are removed
 #' @param ... Extra parameters for glm
 #' @return EuroMOMO data with predicted values, prediction variances and overdispersion
 #' @export
-baseline <- function(data, groupOptions,seasonality =1, trend=1,...){
+baseline <- function(data, groupOptions,seasonality =1, trend=1,clean=TRUE,...){
   # STEP 1: Calculate the trend (ISOweek) as continuous)
   if(missing(trend)) # not give in call
     trend<-groupOptions["trend"]
@@ -95,10 +96,11 @@ baseline <- function(data, groupOptions,seasonality =1, trend=1,...){
   }
 
   # Remove unnecessary tools
-  for(i in c(grep("^sin",names(data),value=TRUE),
-             grep("^cos",names(data),value=TRUE),
-             grep("^Cond",names(data),value=TRUE),
-             "wk"#,"YoDi","WoDi"
+  if(clean)
+    for(i in c(grep("^sin",names(data),value=TRUE),
+               grep("^cos",names(data),value=TRUE),
+               grep("^Cond",names(data),value=TRUE),
+               "wk"#,"YoDi","WoDi"
              )) data[[i]]<-NULL
 
   return(data)

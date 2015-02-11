@@ -3,7 +3,8 @@
 \alias{baseline}
 \title{Calculate baseline}
 \usage{
-baseline(data, groupOptions, seasonality = 1, trend = 1, ...)
+baseline(data, groupOptions, seasonality = 1, trend = 1, clean = TRUE,
+  ...)
 }
 \arguments{
 \item{data}{input data in EuroMOMO format}
@@ -13,6 +14,8 @@ baseline(data, groupOptions, seasonality = 1, trend = 1, ...)
 \item{seasonality}{number of seasonality components (0 or 1) (overrides groupOptions, if given)}
 
 \item{trend}{include a linear trend (0 or 1) (overrides groupOptions, if given)}
+
+\item{clean}{if TRUE (default), the technical variables used in fitting are removed}
 
 \item{...}{Extra parameters for glm}
 }
