@@ -108,26 +108,34 @@ baseline <- function(data, groupOptions,seasonality =1, trend=1,clean=TRUE,...){
 
 #' Create condition variables and add them to the dataset
 #' @param data input data in EuroMOMO format
-#' @param spring: Week numbers for spring period, vector of integers between 1 and 53
-#' @param autumn: Week numbers for autumn period, vector of integers between 1 and 53
-#' @param last: The last period that will be excluded
-#' @param delay: the number of delay week
+#' @param spring Week numbers for spring period, vector of integers between 1 and 53
+#' @param autumn Week numbers for autumn period, vector of integers between 1 and 53
+#' @param last The last period that will be excluded
+#' @param delay the number of delay week
+#' @param seasons the number of full seasons
 #' @return EuroMOMO data with extra variables with conditions used for modelling
 #' @export
-addconditions <- function(data, spring=15:26, autumn=36:45, last=getOption("euromomo")$DayOfAggregation, delay=0){
+addconditions <- function(data, spring=15:26, autumn=36:45, last=getOption("euromomo")$DayOfAggregation, delay=0,seasons=5){
 
   # Run addweeks function to create some week variables and trend
   data<-addweeks(data)
 
   # Create Cond3: Period for spring and autumn
   # spring and autumn must be vectors of integers between 1 and 53
-  if(is.character(spring)) spring<-eval(parse(text=spring))
-  if(is.character(autumn)) autumn<-eval(parse(text=autumn))
+  if(all(is.character(spring))) spring<-eval(parse(text=spring))
+  if(all(is.character(autumn))) autumn<-eval(parse(text=autumn))
   data$CondSeason <- ifelse(with(data, WoDi %in% c(spring, autumn)), 1, 0)
 
   # Create CondDropCurrentSeason: Removing weeks that are in the same season as the actual season
   data$CondDropCurrentSeason <-
-    ifelse(ISOseasonStart(data$ISOweek) %in% ISOseasonStart(ISOweek(last)), 0, 1)
+      ifelse(ISOseasonStart(data$ISOweek) %in% ISOseasonStart(ISOweek(last)), 0, 1)
+
+
+  # Create Condition based on last full N years, where
+  lastact<-(with(subset(data,CondDropCurrentSeason==1 & CondSeason==0),max(as.character(ISOweek))))
+  firstact<-ISOweek2date(paste(ISOyear(lastact) - as.numeric(seasons), "-W", ISOwoy(lastact), "-1",sep=""))
+  cat(lastact,ISOweek(firstact),"\n")
+  data$CondRestrictToLastN <-ifelse(ISOweek2date(paste(data$ISOweek,"-1",sep=""))>=firstact,1,0)
 
   # Create Cond5: Long delays
   delay<-pmax(0,delay)[1]
@@ -168,6 +176,7 @@ addweeks <- function(data){
 #' Append zscores to the EuroMoMo data
 #'
 #' @param data a data frame in EuroMoMo format
+#' @param type Which type to append ('baseline' or 'both')
 #' @return a data frame in EuroMoMo format
 #' @export
 zscore <- function(data,type=momoopts("DelayVariance")) {
@@ -199,6 +208,7 @@ zscore <- function(data,type=momoopts("DelayVariance")) {
 #'
 #' @param data a data frame in EuroMoMo format
 #' @param multiplier how many approximate standard deviations to use?
+#' @param type Which type to append ('baseline', 'basedelay', 'delay' or 'both') or 'both')
 #' @return a data frame in EuroMoMo format
 #' @export
 excess<-function(data,multiplier=2,type=momoopts("DelayVariance")){

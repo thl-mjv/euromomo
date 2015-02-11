@@ -67,7 +67,8 @@ for (i in groups) {
                        spring=getOption("euromomo")$spring,
                        autumn=getOption("euromomo")$autumn,
                        delay=back,
-                       last=getOption("euromomo")$DayOfAggregation)
+                       last=getOption("euromomo")$DayOfAggregation,
+                       seasons=getOption("euromomo")$BaselineSeasons)
 
   #Add meta data (as a column replicating all the information).
   data2WithMD <- addMetaData(df=data2, groupName=i, groupOptions=groupOpts)

@@ -18,7 +18,7 @@ Depends:
     ISOweek
 Description: Code for running the R version of the EuroMoMo algorithm (A-MOMO
     4.3)
-License: GPL 2.0
+License: GPL-3
 LazyData: yes
 Suggests:
     foreign,
